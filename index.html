@@ -273,6 +273,12 @@ textarea { resize:vertical; min-height:100px; }
 
 hr.divider { border:none; border-top:1px solid var(--border); margin:28px 0; }
 
+/* 保固即時檢查 */
+.warranty-check-box { display:none; border-radius:8px; padding:12px 16px; margin-top:10px; font-size:14px; font-weight:500; line-height:1.7; }
+.wcb-ok { background:var(--success-bg); border:1px solid #a8d5b5; color:var(--success); }
+.wcb-ng { background:var(--danger-bg); border:1px solid #f5b8b5; color:var(--danger); }
+.wcb-block { background:var(--warning-bg); border:1px solid #f5dcb0; color:var(--warning); }
+
 .field-error { font-size:13px; color:var(--danger); margin-top:5px; display:none; font-weight:500; }
 input.error,select.error,textarea.error { border-color:var(--danger); box-shadow:0 0 0 3px rgba(217,48,37,0.12); }
 
@@ -349,7 +355,7 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
 
       <div class="section-sub">產品資訊</div>
       <div class="form-row">
-        <div class="form-group"><label>產品型號 <span class="req">*</span></label><input type="text" id="f-product" placeholder="例：Arctis Nova Pro"><div class="field-error" id="err-product">請填寫產品型號</div></div>
+        <div class="form-group"><label>產品型號 <span class="req">*</span></label><input type="text" id="f-product" placeholder="例：Arctis Nova Pro" oninput="checkWarrantyFront()"><div class="field-error" id="err-product">請填寫產品型號</div></div>
         <div class="form-group"><label>序號 / S/N</label><input type="text" id="f-serial" placeholder="SteelSeries 請填19碼序號"></div>
       </div>
 
@@ -372,9 +378,11 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
       </div>
 
       <div class="form-row">
-        <div class="form-group"><label>購買日期</label><input type="date" id="f-purchaseDate"></div>
+        <div class="form-group"><label>購買日期</label><input type="date" id="f-purchaseDate" onchange="checkWarrantyFront()"></div>
         <div class="form-group"><label>購買通路</label><input type="text" id="f-channel" placeholder="例：PChome、燦坤、三井"></div>
       </div>
+      <!-- 保固即時檢查結果 -->
+      <div class="warranty-check-box" id="warranty-check-box"></div>
 
       <div class="form-group">
         <label>購買憑證 <span class="req">*</span>（發票 / 收據截圖）</label>
@@ -493,6 +501,111 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
 const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxoq3IXREKj8fd5N_6H8EEL29S87FnUMgJGBzKtKuXfSAjeVRzDFyHlMG9bn8i9Iwyt/exec";
 let selectedBrand="",selectedChannel="個人報修",invoiceUrl="",uploadingFile=false;
 
+// ── 保固規則（前台判斷）──────────────────────────────
+const WARRANTY_RULES = {
+  SteelSeries: (purchaseDate) => {
+    if (!purchaseDate) return { ok: true, msg: '' }; // 無日期讓後端判斷
+    const pd = new Date(purchaseDate);
+    const cutoff = new Date('2024-03-25');
+    const years = pd < cutoff ? 2 : 1;
+    const expiry = new Date(pd); expiry.setFullYear(expiry.getFullYear() + years);
+    const ok = new Date() <= expiry;
+    return { ok, expiry, years, msg: ok ? '' : `保固已到期（${years}年保固，到期：${fmt(expiry)}）` };
+  },
+  Razer: (purchaseDate, productName) => {
+    if (!purchaseDate) return { ok: true, msg: '' };
+    const isEarphone = /耳機|hammerhead|kaira|blackshark/i.test(productName||'');
+    const years = isEarphone ? 2 : 1;
+    const pd = new Date(purchaseDate);
+    const expiry = new Date(pd); expiry.setFullYear(expiry.getFullYear() + years);
+    const ok = new Date() <= expiry;
+    return { ok, expiry, years, msg: ok ? '' : `保固已到期（${years}年保固，到期：${fmt(expiry)}）` };
+  },
+  Logitech: (purchaseDate) => {
+    if (!purchaseDate) return { ok: true, msg: '' };
+    const pd = new Date(purchaseDate); const expiry = new Date(pd);
+    expiry.setFullYear(expiry.getFullYear() + 2);
+    const ok = new Date() <= expiry;
+    return { ok, expiry, years: 2, msg: ok ? '' : `保固已到期（2年保固，到期：${fmt(expiry)}）` };
+  },
+  Acer: (purchaseDate) => {
+    if (!purchaseDate) return { ok: true, msg: '' };
+    const pd = new Date(purchaseDate); const expiry = new Date(pd);
+    expiry.setFullYear(expiry.getFullYear() + 1);
+    const ok = new Date() <= expiry;
+    return { ok, expiry, years: 1, msg: ok ? '' : `保固已到期（1年保固，到期：${fmt(expiry)}）` };
+  },
+  AGM: (purchaseDate) => {
+    if (!purchaseDate) return { ok: true, msg: '' };
+    const pd = new Date(purchaseDate); const expiry = new Date(pd);
+    expiry.setFullYear(expiry.getFullYear() + 1);
+    const ok = new Date() <= expiry;
+    return { ok, expiry, years: 1, msg: ok ? '' : `保固已到期（1年保固，到期：${fmt(expiry)}）` };
+  },
+  Xbox: (purchaseDate) => {
+    if (!purchaseDate) return { ok: true, msg: '' };
+    const pd = new Date(purchaseDate); const expiry = new Date(pd);
+    expiry.setDate(expiry.getDate() + 7);
+    const ok = new Date() <= expiry;
+    return { ok, expiry, msg: ok ? '' : `已超過7日 DOA 期限（到期：${fmt(expiry)}）。請至 Xbox 官方報修。` };
+  }
+};
+
+// 不接受保修的產品關鍵字
+const NON_WARRANTY_KEYWORDS = ['滑鼠墊','mousepad','mouse pad','rival 105','耗材','consumable'];
+
+function fmt(d){ return d.toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}); }
+
+function checkWarrantyFront() {
+  const brand = selectedBrand;
+  const purchaseDate = document.getElementById('f-purchaseDate').value;
+  const product = (document.getElementById('f-product').value || '').toLowerCase();
+
+  // 清除舊提示
+  const box = document.getElementById('warranty-check-box');
+  box.style.display = 'none'; box.className = 'warranty-check-box';
+
+  if (!brand) return true;
+
+  // 非保固產品
+  if (NON_WARRANTY_KEYWORDS.some(k => product.includes(k.toLowerCase()))) {
+    box.style.display = 'block';
+    box.className = 'warranty-check-box wcb-block';
+    box.innerHTML = '🚫 <strong>此產品不在保固範圍內</strong>（消耗品或已停產產品無法申請保修）';
+    return false;
+  }
+
+  // Xbox 超過7日
+  if (brand === 'Xbox' && purchaseDate) {
+    const r = WARRANTY_RULES.Xbox(purchaseDate);
+    if (!r.ok) {
+      box.style.display = 'block';
+      box.className = 'warranty-check-box wcb-ng';
+      box.innerHTML = `❌ <strong>${r.msg}</strong>`;
+      return false;
+    }
+  }
+
+  if (!purchaseDate) return true; // 未填購買日期，允許繼續
+
+  const ruleFn = WARRANTY_RULES[brand] || WARRANTY_RULES['AGM'];
+  const productName = document.getElementById('f-product').value;
+  const result = ruleFn(purchaseDate, productName);
+
+  if (!result.ok) {
+    box.style.display = 'block';
+    box.className = 'warranty-check-box wcb-ng';
+    box.innerHTML = `❌ <strong>${result.msg}</strong><br><span style="font-size:13px;">如確認在保固期內，請聯絡客服 hi@acergaming.com</span>`;
+    return false;
+  } else if (result.expiry) {
+    const daysLeft = Math.ceil((result.expiry - new Date()) / 86400000);
+    box.style.display = 'block';
+    box.className = 'warranty-check-box wcb-ok';
+    box.innerHTML = `✅ 保固確認：保固 ${result.years||''} 年，到期日 ${fmt(result.expiry)}，剩餘 ${daysLeft} 天`;
+  }
+  return true;
+}
+
 function switchTab(tab,btn){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -504,6 +617,7 @@ function selectBrand(brand,el){
   document.getElementById('err-brand').style.display='none';
   document.getElementById('xbox-notice').style.display=brand==='Xbox'?'block':'none';
   document.getElementById('razer-fields').style.display=brand==='Razer'?'block':'none';
+  checkWarrantyFront();
 }
 function selectRadio(group,value,el){
   el.closest('.radio-group').querySelectorAll('.radio-card').forEach(c=>c.classList.remove('selected'));
@@ -548,6 +662,10 @@ function validate(){
   check('f-issue','err-issue',document.getElementById('f-issue').value.trim());
   if(!invoiceUrl){document.getElementById('err-invoice').style.display='block';ok=false;}
   if(!document.getElementById('agreeCheck').checked){alert('請勾選同意保修服務條款');ok=false;}
+  // 保固檢查（有填購買日期才強制檢查）
+  if(ok && document.getElementById('f-purchaseDate').value) {
+    if(!checkWarrantyFront()) { ok=false; document.getElementById('warranty-check-box').scrollIntoView({behavior:'smooth',block:'center'}); }
+  }
   return ok;
 }
 function submitForm(){
