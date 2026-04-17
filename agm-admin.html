@@ -6,379 +6,393 @@
 <title>AGM 保修後台</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Inter:wght@600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #f5f7fa;
-  --white: #ffffff;
-  --surface2: #f0f4f8;
-  --border: #d8e0ea;
-  --border2: #b8c8da;
-  --accent: #1a73e8;
-  --accent-light: #e8f0fe;
-  --accent-hover: #1557b0;
-  --success: #1e8e3e;
-  --success-bg: #e6f4ea;
-  --warning: #e37400;
-  --warning-bg: #fef7e0;
-  --danger: #d93025;
-  --danger-bg: #fce8e6;
-  --purple: #7c4dff;
-  --purple-bg: #f3e8fd;
-  --text: #202124;
-  --text2: #5f6368;
-  --text3: #9aa0a6;
-  --shadow: 0 1px 6px rgba(0,0,0,0.08);
-  --shadow-lg: 0 4px 20px rgba(0,0,0,0.12);
+:root{
+  --bg:#f5f7fa;--white:#fff;--surface2:#f0f4f8;
+  --border:#d8e0ea;--border2:#b8c8da;
+  --accent:#1a73e8;--accent-light:#e8f0fe;--accent-hover:#1557b0;
+  --success:#1e8e3e;--success-bg:#e6f4ea;
+  --warning:#e37400;--warning-bg:#fef7e0;
+  --danger:#d93025;--danger-bg:#fce8e6;
+  --purple:#7c4dff;--purple-bg:#f3e8fd;
+  --gray:#5f6368;--gray-bg:#f1f3f4;
+  --text:#202124;--text2:#5f6368;--text3:#9aa0a6;
+  --shadow:0 1px 4px rgba(0,0,0,.08);--shadow-lg:0 4px 20px rgba(0,0,0,.12);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:14px;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:14px;min-height:100vh;}
 
-header{
-  background:var(--white);border-bottom:1px solid var(--border);box-shadow:var(--shadow);
-  padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
-}
-.logo{font-family:'Inter',sans-serif;font-size:18px;font-weight:700;color:var(--text);}
+header{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
+.logo{font-family:'Inter',sans-serif;font-size:17px;font-weight:700;}
 .logo span{color:var(--accent);}
-.header-right{display:flex;align-items:center;gap:12px;}
-.portal-link{font-size:13px;color:var(--text2);text-decoration:none;padding:6px 14px;border:1.5px solid var(--border2);border-radius:7px;transition:all .2s;font-weight:500;}
-.portal-link:hover{background:var(--surface2);color:var(--text);}
-.refresh-btn{background:var(--white);border:1.5px solid var(--border2);color:var(--text2);padding:6px 14px;border-radius:7px;cursor:pointer;font-size:13px;font-family:'Noto Sans TC',sans-serif;font-weight:500;transition:all .2s;}
-.refresh-btn:hover{border-color:var(--accent);color:var(--accent);}
+.hdr-right{display:flex;gap:8px;}
+.hdr-btn{font-size:13px;color:var(--text2);text-decoration:none;padding:7px 14px;border:1.5px solid var(--border2);border-radius:7px;transition:all .2s;font-weight:500;cursor:pointer;background:var(--white);font-family:'Noto Sans TC',sans-serif;}
+.hdr-btn:hover{background:var(--surface2);color:var(--text);}
 
-.layout{display:flex;flex:1;overflow:hidden;}
+/* Stats */
+.stats-bar{background:var(--white);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.stat-pill{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.stat-pill:hover{border-color:var(--accent);}
+.stat-pill.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
+.stat-num{font-family:'Inter',sans-serif;font-size:16px;font-weight:700;}
+.sn-all{color:var(--accent);}.sn-pending{color:var(--warning);}.sn-testing{color:var(--purple);}
+.sn-exchange{color:var(--success);}.sn-return{color:var(--purple);}.sn-done{color:var(--gray);}.sn-issue{color:var(--danger);}
 
-/* Sidebar */
-.sidebar{width:300px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;box-shadow:var(--shadow);}
-.sidebar-top{padding:16px;border-bottom:1px solid var(--border);}
+/* Toolbar */
+.toolbar{background:var(--white);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.search-input{flex:1;min-width:160px;max-width:260px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:7px;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:14px;padding:8px 12px;outline:none;transition:border-color .2s;}
+.search-input:focus{border-color:var(--accent);background:var(--white);}
+.filter-grp{display:flex;gap:6px;flex-wrap:wrap;}
+.fchip{padding:6px 14px;border:1.5px solid var(--border2);border-radius:20px;font-size:13px;color:var(--text2);cursor:pointer;background:var(--white);font-family:'Noto Sans TC',sans-serif;font-weight:500;transition:all .2s;white-space:nowrap;}
+.fchip:hover{border-color:var(--accent);color:var(--accent);}
+.fchip.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+.count-lbl{margin-left:auto;font-size:13px;color:var(--text3);}
 
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.stat-card{background:var(--surface2);border-radius:8px;padding:10px 12px;border:1px solid var(--border);}
-.stat-num{font-family:'Inter',sans-serif;font-size:24px;font-weight:700;line-height:1;}
-.stat-label{font-size:11px;color:var(--text3);margin-top:3px;font-weight:500;}
-.stat-total .stat-num{color:var(--accent);}
-.stat-pending .stat-num{color:var(--warning);}
-.stat-done .stat-num{color:var(--success);}
-.stat-issue .stat-num{color:var(--danger);}
+/* Table */
+.tbl-wrap{overflow-x:auto;padding:16px 24px 80px;}
+table{width:100%;border-collapse:collapse;background:var(--white);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);}
+thead tr{background:var(--surface2);border-bottom:2px solid var(--border);}
+th{padding:11px 14px;text-align:left;font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s;cursor:pointer;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--accent-light);}
+tbody tr.sel{background:#dbeafe;}
+td{padding:12px 14px;font-size:14px;vertical-align:middle;}
+.td-id{font-family:'Inter',sans-serif;font-weight:700;color:var(--accent);white-space:nowrap;}
+.td-name{font-weight:500;}
+.td-product{color:var(--text2);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.td-date{white-space:nowrap;color:var(--text2);font-size:13px;}
+.td-days{font-family:'Inter',sans-serif;font-weight:700;text-align:center;}
+.d-warn{color:var(--warning);}.d-ok{color:var(--success);}
+.td-notify{text-align:center;font-size:15px;}
 
-.search-box{width:100%;background:var(--surface2);border:1.5px solid var(--border2);border-radius:7px;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:14px;padding:9px 12px;outline:none;transition:border-color .2s;}
-.search-box:focus{border-color:var(--accent);}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;white-space:nowrap;}
+.b-完成填表{background:var(--gray-bg);color:var(--gray);}
+.b-收貨歸檔,.b-收件歸檔{background:var(--accent-light);color:var(--accent);}
+.b-排測中{background:var(--warning-bg);color:var(--warning);}
+.b-可換貨{background:var(--success-bg);color:var(--success);}
+.b-原件退回{background:var(--purple-bg);color:var(--purple);}
+.b-已結案,.b-手動結案,.b-結案{background:var(--gray-bg);color:var(--gray);}
 
-.filter-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
-.filter-chip{padding:5px 12px;border:1.5px solid var(--border2);border-radius:16px;font-size:12px;color:var(--text2);cursor:pointer;background:var(--white);font-family:'Noto Sans TC',sans-serif;font-weight:500;transition:all .2s;white-space:nowrap;}
-.filter-chip:hover{border-color:var(--accent);color:var(--accent);}
-.filter-chip.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+.wdot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.w-ok{background:var(--success);}.w-ng{background:var(--danger);}.w-warn{background:var(--warning);}.w-none{background:var(--border2);}
 
-.case-list{flex:1;overflow-y:auto;}
-.case-list::-webkit-scrollbar{width:4px;}
-.case-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+/* Drawer */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:200;}
+.overlay.show{display:block;}
+.drawer{position:fixed;top:0;right:-500px;width:460px;height:100vh;background:var(--white);box-shadow:var(--shadow-lg);z-index:201;transition:right .3s ease;overflow-y:auto;display:flex;flex-direction:column;}
+.drawer.open{right:0;}
+.drawer::-webkit-scrollbar{width:4px;}
+.drawer::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 
-.case-item{padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
-.case-item:hover{background:var(--surface2);}
-.case-item.selected{background:var(--accent-light);border-left:3px solid var(--accent);}
-.case-item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px;}
-.case-id{font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:var(--accent);}
-.case-date{font-size:11px;color:var(--text3);white-space:nowrap;}
-.case-name{font-size:13px;color:var(--text);margin-bottom:2px;font-weight:500;}
-.case-product{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.case-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
+.dw-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:var(--white);z-index:1;}
+.dw-id{font-family:'Inter',sans-serif;font-size:22px;font-weight:700;color:var(--accent);}
+.dw-sub{font-size:12px;color:var(--text3);margin-top:3px;}
+.close-x{background:none;border:none;font-size:20px;color:var(--text3);cursor:pointer;padding:4px;line-height:1;}
+.close-x:hover{color:var(--text);}
 
-.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;}
-.chip-完成填表{background:#f1f3f4;color:#5f6368;}
-.chip-收貨歸檔,.chip-收件歸檔{background:var(--accent-light);color:var(--accent);}
-.chip-排測中{background:var(--warning-bg);color:var(--warning);}
-.chip-可換貨{background:var(--success-bg);color:var(--success);}
-.chip-原件退回{background:var(--purple-bg);color:var(--purple);}
-.chip-手動結案,.chip-結案{background:#f1f3f4;color:#9aa0a6;}
-.chip-異常{background:var(--danger-bg);color:var(--danger);}
+.dw-body{padding:18px 22px;flex:1;}
 
-.w-dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
-.w-ok{background:var(--success);}
-.w-ng{background:var(--danger);}
-.w-warn{background:var(--warning);}
+.ds-title{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.ditem{background:var(--surface2);border-radius:7px;padding:9px 12px;border:1px solid var(--border);}
+.ditem.full{grid-column:span 2;}
+.dlbl{font-size:11px;color:var(--text3);font-weight:600;margin-bottom:3px;}
+.dval{font-size:14px;color:var(--text);font-weight:500;word-break:break-all;}
 
-.empty-list{text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;}
+.wbar{border-radius:7px;padding:10px 14px;margin-bottom:14px;font-size:13px;font-weight:500;}
+.wok{background:var(--success-bg);border:1px solid #a8d5b5;color:var(--success);}
+.wng{background:var(--danger-bg);border:1px solid #f5b8b5;color:var(--danger);}
+.wwarn{background:var(--warning-bg);border:1px solid #f5dcb0;color:var(--warning);}
+.wblk{background:var(--gray-bg);border:1px solid var(--border2);color:var(--gray);}
 
-/* Detail */
-.detail-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
-.detail-placeholder{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--text3);}
-.detail-placeholder-icon{font-size:56px;opacity:.3;}
-.detail-placeholder-text{font-size:15px;}
-
-.detail-content{flex:1;overflow-y:auto;padding:24px;display:none;}
-.detail-content.show{display:block;}
-.detail-content::-webkit-scrollbar{width:4px;}
-.detail-content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-
-.detail-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
-.detail-caseid{font-family:'Inter',sans-serif;font-size:28px;font-weight:700;color:var(--accent);}
-.detail-brand{font-size:13px;color:var(--text3);margin-top:3px;}
-
-.info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;}
-.info-block{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px 14px;box-shadow:var(--shadow);}
-.info-block.wide{grid-column:span 2;}
-.info-block.full{grid-column:span 3;}
-.info-lbl{font-size:11px;color:var(--text3);letter-spacing:.5px;margin-bottom:4px;font-weight:600;text-transform:uppercase;}
-.info-val{font-size:14px;color:var(--text);font-weight:500;word-break:break-all;}
-.info-val a{color:var(--accent);text-decoration:none;}
-.info-val a:hover{text-decoration:underline;}
-
-.warranty-block{border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:14px;font-weight:500;}
-.wb-ok{background:var(--success-bg);border:1px solid #a8d5b5;color:var(--success);}
-.wb-ng{background:var(--danger-bg);border:1px solid #f5b8b5;color:var(--danger);}
-.wb-warn{background:var(--warning-bg);border:1px solid #f5dcb0;color:var(--warning);}
-.wb-block{background:#f1f3f4;border:1px solid var(--border2);color:var(--text3);}
-
-.action-panel{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;box-shadow:var(--shadow);}
-.action-title{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
-.action-row{display:flex;gap:10px;margin-bottom:12px;align-items:flex-end;flex-wrap:wrap;}
-.action-row .form-group{flex:1;min-width:120px;}
-
-label{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:6px;}
+.af{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;}
+.af-title{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px;}
+.fg{margin-bottom:10px;}
+label{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:5px;}
 select,input[type=text]{width:100%;background:var(--white);border:1.5px solid var(--border2);border-radius:7px;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:14px;padding:9px 11px;outline:none;transition:border-color .2s;}
-select:focus,input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,115,232,0.1);}
-textarea{width:100%;background:var(--white);border:1.5px solid var(--border2);border-radius:7px;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:14px;padding:9px 11px;outline:none;resize:vertical;min-height:80px;transition:border-color .2s;}
-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,115,232,0.1);}
+select:focus,input[type=text]:focus{border-color:var(--accent);}
+textarea{width:100%;background:var(--white);border:1.5px solid var(--border2);border-radius:7px;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:14px;padding:9px 11px;outline:none;resize:vertical;min-height:70px;transition:border-color .2s;}
+textarea:focus{border-color:var(--accent);}
 
-.action-btn{padding:9px 20px;border-radius:7px;cursor:pointer;font-size:14px;font-family:'Noto Sans TC',sans-serif;font-weight:600;border:none;transition:all .2s;white-space:nowrap;}
-.btn-primary{background:var(--accent);color:#fff;}
-.btn-primary:hover{background:var(--accent-hover);}
-.btn-danger{background:var(--danger-bg);color:var(--danger);border:1px solid #f5b8b5;}
-.btn-danger:hover{background:#f8d0ce;}
-.btn-neutral{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border2);}
-.btn-neutral:hover{color:var(--text);border-color:var(--border2);}
+.track-section{display:none;}
+.track-section.show{display:block;}
+.track-hint{font-size:12px;color:var(--text3);margin-top:4px;line-height:1.6;}
+
+.abtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.abtn{padding:9px 18px;border-radius:7px;cursor:pointer;font-size:14px;font-family:'Noto Sans TC',sans-serif;font-weight:600;border:none;transition:all .2s;}
+.abtn-p{background:var(--accent);color:#fff;}.abtn-p:hover{background:var(--accent-hover);}
+.abtn-d{background:var(--danger-bg);color:var(--danger);border:1px solid #f5b8b5;}.abtn-d:hover{background:#f8d0ce;}
+.abtn-n{background:var(--white);color:var(--text2);border:1.5px solid var(--border2);}.abtn-n:hover{color:var(--text);}
+
+.closed-box{background:var(--gray-bg);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;font-size:14px;color:var(--text2);line-height:1.8;}
 
 /* Modal */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;align-items:center;justify-content:center;}
-.modal-overlay.show{display:flex;}
-.modal{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:420px;width:90%;animation:fadeIn .2s ease;box-shadow:var(--shadow-lg);}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
-.modal-title{font-family:'Inter',sans-serif;font-size:20px;font-weight:700;margin-bottom:12px;color:var(--text);}
-.modal-body{color:var(--text2);font-size:14px;line-height:1.8;margin-bottom:22px;}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;align-items:center;justify-content:center;}
+.modal-ov.show{display:flex;}
+.modal{background:var(--white);border-radius:14px;padding:26px;max-width:380px;width:90%;box-shadow:var(--shadow-lg);animation:fup .2s ease;}
+@keyframes fup{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.modal-title{font-family:'Inter',sans-serif;font-size:17px;font-weight:700;margin-bottom:10px;}
+.modal-body{color:var(--text2);font-size:14px;line-height:1.8;margin-bottom:20px;}
+.modal-acts{display:flex;gap:8px;justify-content:flex-end;}
 
 /* Toast */
-.toast{position:fixed;bottom:24px;right:24px;z-index:400;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-size:14px;font-weight:500;display:none;animation:slideIn .3s ease;box-shadow:var(--shadow-lg);}
-@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:400;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 22px;font-size:14px;font-weight:500;display:none;box-shadow:var(--shadow-lg);white-space:nowrap;animation:fup .3s ease;}
 .toast.show{display:block;}
-.toast.success{border-color:#a8d5b5;color:var(--success);}
-.toast.error{border-color:#f5b8b5;color:var(--danger);}
+.toast.s{border-color:#a8d5b5;color:var(--success);}
+.toast.e{border-color:#f5b8b5;color:var(--danger);}
 
-.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
-@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:4px;}
+@keyframes sp{to{transform:rotate(360deg)}}
+.empty-td{text-align:center;padding:48px!important;color:var(--text3);font-size:15px;}
+
+@media(max-width:640px){.drawer{width:100%;right:-100%;}.tbl-wrap{padding:10px 10px 60px;}th,td{padding:9px 8px;}}
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">AGM <span>保修後台</span></div>
-  <div class="header-right">
-    <button class="refresh-btn" onclick="loadCases()">↻ 重新整理</button>
-    <a href="index.html" class="portal-link">← 客戶頁面</a>
+  <div class="hdr-right">
+    <button class="hdr-btn" onclick="loadCases()">↻ 重新整理</button>
+    <a href="index.html" class="hdr-btn">← 客戶頁面</a>
   </div>
 </header>
 
-<div class="layout">
-  <div class="sidebar">
-    <div class="sidebar-top">
-      <div class="stats-grid">
-        <div class="stat-card stat-total"><div class="stat-num" id="stat-total">—</div><div class="stat-label">總案件</div></div>
-        <div class="stat-card stat-pending"><div class="stat-num" id="stat-pending">—</div><div class="stat-label">待處理</div></div>
-        <div class="stat-card stat-done"><div class="stat-num" id="stat-done">—</div><div class="stat-label">已結案</div></div>
-        <div class="stat-card stat-issue"><div class="stat-num" id="stat-issue">—</div><div class="stat-label">保固異常</div></div>
-      </div>
-      <input class="search-box" type="text" id="searchBox" placeholder="搜尋案件編號、姓名、產品..." oninput="filterCases()">
-      <div class="filter-row">
-        <button class="filter-chip active" onclick="setFilter('brand','ALL',this)">全部</button>
-        <button class="filter-chip" onclick="setFilter('brand','SteelSeries',this)">SS</button>
-        <button class="filter-chip" onclick="setFilter('brand','Razer',this)">Razer</button>
-        <button class="filter-chip" onclick="setFilter('brand','其他品牌',this)">其他</button>
-      </div>
-      <div class="filter-row">
-        <button class="filter-chip active" onclick="setFilter('status','ALL',this)">所有狀態</button>
-        <button class="filter-chip" onclick="setFilter('status','完成填表',this)">待收件</button>
-        <button class="filter-chip" onclick="setFilter('status','排測中',this)">排測中</button>
-        <button class="filter-chip" onclick="setFilter('status','可換貨',this)">可換貨</button>
-        <button class="filter-chip" onclick="setFilter('status','原件退回',this)">退回中</button>
-      </div>
-    </div>
-    <div class="case-list" id="caseList">
-      <div class="empty-list"><span class="spinner"></span> 載入中...</div>
-    </div>
-  </div>
-
-  <div class="detail-panel">
-    <div class="detail-placeholder" id="detailPlaceholder">
-      <div class="detail-placeholder-icon">📋</div>
-      <div class="detail-placeholder-text">點選左側案件查看詳情</div>
-    </div>
-    <div class="detail-content" id="detailContent"></div>
-  </div>
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat-pill active" onclick="setStatus('ALL',this)"><span class="stat-num sn-all" id="s0">0</span>全部</div>
+  <div class="stat-pill" onclick="setStatus('完成填表',this)"><span class="stat-num sn-pending" id="s1">0</span>待收件</div>
+  <div class="stat-pill" onclick="setStatus('收貨歸檔',this)"><span class="stat-num sn-testing" id="s2">0</span>收貨歸檔</div>
+  <div class="stat-pill" onclick="setStatus('排測中',this)"><span class="stat-num sn-testing" id="s3">0</span>排測中</div>
+  <div class="stat-pill" onclick="setStatus('可換貨',this)"><span class="stat-num sn-exchange" id="s4">0</span>可換貨</div>
+  <div class="stat-pill" onclick="setStatus('原件退回',this)"><span class="stat-num sn-return" id="s5">0</span>原件退回</div>
+  <div class="stat-pill" onclick="setStatus('已結案',this)"><span class="stat-num sn-done" id="s6">0</span>已結案</div>
+  <div class="stat-pill" onclick="setStatus('WARRANTY',this)" style="margin-left:auto;"><span class="stat-num sn-issue" id="s7">0</span>保固異常</div>
 </div>
 
-<div class="modal-overlay" id="modalOverlay">
+<!-- Toolbar -->
+<div class="toolbar">
+  <input class="search-input" type="text" id="searchInput" placeholder="🔍 搜尋案件、姓名、產品..." oninput="renderTable()">
+  <div class="filter-grp">
+    <div class="fchip active" onclick="setBrand('ALL',this)">全部品牌</div>
+    <div class="fchip" onclick="setBrand('SteelSeries',this)">SteelSeries</div>
+    <div class="fchip" onclick="setBrand('Razer',this)">Razer</div>
+    <div class="fchip" onclick="setBrand('其他品牌',this)">其他品牌</div>
+  </div>
+  <span class="count-lbl" id="countLbl">共 0 筆</span>
+</div>
+
+<!-- Table -->
+<div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>案件編號</th>
+        <th>品牌</th>
+        <th>姓名</th>
+        <th>產品</th>
+        <th>申請日</th>
+        <th>狀態</th>
+        <th style="text-align:center;">天數</th>
+        <th style="text-align:center;">保固</th>
+        <th style="text-align:center;">通知信</th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+      <tr><td class="empty-td" colspan="9"><span class="spin"></span> 載入中...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Drawer -->
+<div class="overlay" id="ov" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="dw-header">
+    <div>
+      <div class="dw-id" id="dw-id">—</div>
+      <div class="dw-sub" id="dw-sub">—</div>
+    </div>
+    <button class="close-x" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="dw-body" id="dw-body"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal-ov" id="mOv">
   <div class="modal">
-    <div class="modal-title" id="modalTitle"></div>
-    <div class="modal-body" id="modalBody"></div>
-    <div class="modal-actions" id="modalActions"></div>
+    <div class="modal-title" id="mTitle"></div>
+    <div class="modal-body" id="mBody"></div>
+    <div class="modal-acts" id="mActs"></div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxoq3IXREKj8fd5N_6H8EEL29S87FnUMgJGBzKtKuXfSAjeVRzDFyHlMG9bn8i9Iwyt/exec";
-let allCases=[],filters={brand:'ALL',status:'ALL'},currentCase=null;
+const API="https://script.google.com/macros/s/AKfycbxoq3IXREKj8fd5N_6H8EEL29S87FnUMgJGBzKtKuXfSAjeVRzDFyHlMG9bn8i9Iwyt/exec";
+let cases=[],fBrand='ALL',fStatus='ALL',current=null;
+const DONE=['手動結案','結案','已結案'];
 
 async function loadCases(){
-  document.getElementById('caseList').innerHTML='<div class="empty-list"><span class="spinner"></span> 載入中...</div>';
+  document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="9"><span class="spin"></span> 載入中...</td></tr>';
   try{
-    const r=await fetch(`${APPS_SCRIPT_URL}?action=listAll`);
-    const d=await r.json();
-    if(d.success){allCases=d.cases;updateStats();renderList();}
-  }catch(e){document.getElementById('caseList').innerHTML='<div class="empty-list">載入失敗，請重新整理</div>';}
+    const d=await(await fetch(`${API}?action=listAll`)).json();
+    if(d.success){cases=d.cases;calcStats();renderTable();}
+  }catch{document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="9" style="color:var(--danger)">載入失敗，請重新整理</td></tr>';}
 }
 
-function updateStats(){
-  const total=allCases.length;
-  const pending=allCases.filter(c=>['完成填表','收貨歸檔','收件歸檔','排測中'].includes(c.status)).length;
-  const done=allCases.filter(c=>['手動結案','結案'].includes(c.status)).length;
-  const issue=allCases.filter(c=>c.warranty&&(c.warranty.includes('❌')||c.warranty.includes('🚫')||c.warranty.includes('🔀'))).length;
-  document.getElementById('stat-total').textContent=total;
-  document.getElementById('stat-pending').textContent=pending;
-  document.getElementById('stat-done').textContent=done;
-  document.getElementById('stat-issue').textContent=issue;
+function calcStats(){
+  document.getElementById('s0').textContent=cases.length;
+  document.getElementById('s1').textContent=cases.filter(c=>c.status==='完成填表').length;
+  document.getElementById('s2').textContent=cases.filter(c=>c.status==='收貨歸檔'||c.status==='收件歸檔').length;
+  document.getElementById('s3').textContent=cases.filter(c=>c.status==='排測中').length;
+  document.getElementById('s4').textContent=cases.filter(c=>c.status==='可換貨').length;
+  document.getElementById('s5').textContent=cases.filter(c=>c.status==='原件退回').length;
+  document.getElementById('s6').textContent=cases.filter(c=>DONE.includes(c.status)).length;
+  document.getElementById('s7').textContent=cases.filter(c=>c.warranty&&(c.warranty.includes('❌')||c.warranty.includes('🚫')||c.warranty.includes('🔀'))).length;
 }
 
-function setFilter(type,value,el){
-  filters[type]=value;
-  el.closest('.filter-row').querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');renderList();
-}
-function filterCases(){renderList();}
+function setBrand(v,el){fBrand=v;el.closest('.filter-grp').querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderTable();}
+function setStatus(v,el){fStatus=v;document.querySelectorAll('.stat-pill').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderTable();}
 
-function renderList(){
-  const q=document.getElementById('searchBox').value.toLowerCase();
-  const list=allCases.filter(c=>{
-    if(filters.brand!=='ALL'&&c.brand!==filters.brand)return false;
-    if(filters.status!=='ALL'&&c.status!==filters.status)return false;
-    if(q&&!((c.caseId||'').toLowerCase().includes(q)||(c.name||'').toLowerCase().includes(q)||(c.product||'').toLowerCase().includes(q)))return false;
+function renderTable(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  let list=cases.filter(c=>{
+    if(fBrand!=='ALL'&&c.brand!==fBrand)return false;
+    if(fStatus==='WARRANTY')return c.warranty&&(c.warranty.includes('❌')||c.warranty.includes('🚫')||c.warranty.includes('🔀'));
+    if(fStatus==='已結案')return DONE.includes(c.status);
+    if(fStatus!=='ALL'&&c.status!==fStatus)return false;
+    if(q&&![(c.caseId||''),(c.name||''),(c.product||''),(c.email||'')].join(' ').toLowerCase().includes(q))return false;
     return true;
   });
-  if(!list.length){document.getElementById('caseList').innerHTML='<div class="empty-list">無符合案件</div>';return;}
-  document.getElementById('caseList').innerHTML=list.map(c=>{
-    const wDot=c.warranty?(c.warranty.includes('✅')?'<span class="w-dot w-ok"></span>':c.warranty.includes('❌')?'<span class="w-dot w-ng"></span>':'<span class="w-dot w-warn"></span>'):'';
-    const date=c.submitDate?new Date(c.submitDate).toLocaleDateString('zh-TW'):'—';
-    return `<div class="case-item ${currentCase?.caseId===c.caseId?'selected':''}" onclick="openCase('${c.caseId}','${c.brand}')">
-      <div class="case-item-top"><div class="case-id">${c.caseId}</div><div class="case-date">${date}</div></div>
-      <div class="case-name">${c.name||'—'}</div>
-      <div class="case-product">${c.product||'—'}</div>
-      <div class="case-footer"><span class="chip chip-${c.status}">${c.status}</span><span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);">${wDot} ${c.brand==='SteelSeries'?'SS':c.brand==='其他品牌'?'Other':c.brand}</span></div>
-    </div>`;
+  list.sort((a,b)=>{const ad=DONE.includes(a.status),bd=DONE.includes(b.status);if(ad!==bd)return ad?1:-1;return new Date(b.submitDate)-new Date(a.submitDate);});
+  document.getElementById('countLbl').textContent=`共 ${list.length} 筆`;
+  if(!list.length){document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="9">📭 無符合案件</td></tr>';return;}
+
+  const today=new Date();today.setHours(0,0,0,0);
+  document.getElementById('tbody').innerHTML=list.map(c=>{
+    const sd=c.submitDate?new Date(c.submitDate):null;
+    const days=sd?Math.ceil((today-sd)/86400000):null;
+    const isDone=DONE.includes(c.status);
+    const daysDisp=isDone&&c.closedDays?c.closedDays+'天':(days!==null?days+'天':'—');
+    const dCls=isDone?'d-ok':days>=14?'d-warn':'';
+    let wdot='<span class="wdot w-none"></span>';
+    if(c.warranty){if(c.warranty.includes('✅'))wdot='<span class="wdot w-ok"></span>';else if(c.warranty.includes('❌')||c.warranty.includes('🚫')||c.warranty.includes('🔀'))wdot='<span class="wdot w-ng"></span>';else wdot='<span class="wdot w-warn"></span>';}
+    const dateStr=sd?sd.toLocaleDateString('zh-TW',{month:'2-digit',day:'2-digit'}):'—';
+    const brandShort=c.brand==='SteelSeries'?'SS':c.brand==='其他品牌'?'Other':c.brand;
+    const statusKey=isDone?'已結案':c.status;
+    return`<tr onclick="openDrawer('${c.caseId}')" class="${current?.caseId===c.caseId?'sel':''}">
+      <td class="td-id">${c.caseId}</td>
+      <td>${brandShort}</td>
+      <td class="td-name">${c.name||'—'}</td>
+      <td class="td-product" title="${c.product||''}">${c.product||'—'}</td>
+      <td class="td-date">${dateStr}</td>
+      <td><span class="badge b-${statusKey}">${statusKey}</span></td>
+      <td class="td-days ${dCls}">${daysDisp}</td>
+      <td style="text-align:center">${wdot}</td>
+      <td class="td-notify">${c.notified?'✅':'—'}</td>
+    </tr>`;
   }).join('');
 }
 
-async function openCase(caseId,brand){
-  const c=allCases.find(x=>x.caseId===caseId);
-  if(!c)return;
-  currentCase=c;renderList();
+function openDrawer(caseId){
+  const c=cases.find(x=>x.caseId===caseId);if(!c)return;
+  current=c;renderTable();
+  document.getElementById('dw-id').textContent=caseId;
+  document.getElementById('dw-sub').textContent=c.brand+(c.submitDate?'　申請：'+new Date(c.submitDate).toLocaleDateString('zh-TW'):'');
+  const isDone=DONE.includes(c.status);
+  const wCls=!c.warranty?'wblk':c.warranty.includes('✅')?'wok':(c.warranty.includes('🚫')||c.warranty.includes('🔀'))?'wblk':c.warranty.includes('❌')?'wng':'wwarn';
+  const sopts=(c.brand==='SteelSeries'?['完成填表','收貨歸檔','排測中','可換貨','原件退回','手動結案']:c.brand==='Razer'?['完成填表','收貨歸檔','排測中','可換貨','原件退回','手動結案','結案']:['完成填表','收件歸檔','手動結案']).map(s=>`<option value="${s}"${c.status===s?' selected':''}>${s}</option>`).join('');
+  const today=new Date();today.setHours(0,0,0,0);
+  const sd=c.submitDate?new Date(c.submitDate):null;
+  const days=sd?Math.ceil((today-sd)/86400000):null;
 
-  const wClass=!c.warranty?'wb-block':c.warranty.includes('✅')?'wb-ok':c.warranty.includes('❌')?'wb-ng':(c.warranty.includes('🚫')||c.warranty.includes('🔀'))?'wb-block':'wb-warn';
-  const statusOptions=brand==='SteelSeries'?['完成填表','收貨歸檔','排測中','可換貨','原件退回','手動結案']:brand==='Razer'?['完成填表','收貨歸檔','排測中','可換貨','原件退回','手動結案','結案']:['完成填表','收件歸檔','手動結案'];
-  const statusOpts=statusOptions.map(s=>`<option value="${s}" ${c.status===s?'selected':''}>${s}</option>`).join('');
-  const date=c.submitDate?new Date(c.submitDate).toLocaleString('zh-TW'):'—';
+  document.getElementById('dw-body').innerHTML=`
+    ${c.warranty?`<div class="wbar ${wCls}">${c.warranty}</div>`:''}
+    <div class="ds-title">客戶資訊</div>
+    <div class="dgrid">
+      <div class="ditem"><div class="dlbl">姓名</div><div class="dval">${c.name||'—'}</div></div>
+      <div class="ditem"><div class="dlbl">電話</div><div class="dval">${c.phone||'—'}</div></div>
+      <div class="ditem full"><div class="dlbl">Email</div><div class="dval">${c.email||'—'}</div></div>
+      <div class="ditem full"><div class="dlbl">產品</div><div class="dval">${c.product||'—'}</div></div>
+      <div class="ditem"><div class="dlbl">AGM PN</div><div class="dval">${c.agmPn||'—'}</div></div>
+      <div class="ditem"><div class="dlbl">進行天數</div><div class="dval" style="font-weight:700;color:${days>=14?'var(--warning)':'var(--text)'}">${days!==null?days+' 天':'—'}</div></div>
+      <div class="ditem"><div class="dlbl">通知信</div><div class="dval">${c.notified?'✅ 已寄出':'— 未寄'}</div></div>
+      <div class="ditem"><div class="dlbl">目前狀態</div><div class="dval"><span class="badge b-${isDone?'已結案':c.status}">${isDone?'已結案':c.status}</span></div></div>
+    </div>
 
-  document.getElementById('detailPlaceholder').style.display='none';
-  const dc=document.getElementById('detailContent');
-  dc.classList.add('show');
-  dc.innerHTML=`
-    <div class="detail-header">
-      <div><div class="detail-caseid">${caseId}</div><div class="detail-brand">${brand} ・ 申請時間：${date}</div></div>
-      <span class="chip chip-${c.status}" style="font-size:13px;padding:6px 14px;">${c.status}</span>
-    </div>
-    ${c.warranty?`<div class="warranty-block ${wClass}">${c.warranty}</div>`:''}
-    <div class="info-grid">
-      <div class="info-block"><div class="info-lbl">姓名</div><div class="info-val">${c.name||'—'}</div></div>
-      <div class="info-block"><div class="info-lbl">Email</div><div class="info-val">${c.email||'—'}</div></div>
-      <div class="info-block"><div class="info-lbl">AGM PN</div><div class="info-val">${c.agmPn||'—'}</div></div>
-      <div class="info-block wide"><div class="info-lbl">產品</div><div class="info-val">${c.product||'—'}</div></div>
-      <div class="info-block"><div class="info-lbl">品牌</div><div class="info-val">${c.brand}</div></div>
-    </div>
-    <div class="action-panel">
-      <div class="action-title">更新案件</div>
-      <div class="action-row">
-        <div class="form-group"><label>更新狀態</label><select id="newStatus">${statusOpts}</select></div>
-        <div class="form-group" id="trackingWrap" style="${['可換貨','原件退回'].includes(c.status)?'':'display:none;'}">
-          <label>快遞 / 物流單號</label><input type="text" id="trackingNo" placeholder="填入後自動寄通知信">
+    ${!isDone?`
+    <div class="af">
+      <div class="af-title">更新案件</div>
+      <div class="fg"><label>更新狀態</label><select id="ns" onchange="onNsChange(this.value)">${sopts}</select></div>
+      <div class="track-section ${['可換貨','原件退回'].includes(c.status)?'show':''}" id="ts">
+        <div class="fg">
+          <label>快遞 / 物流單號 <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="tn" placeholder="填入後自動寄通知信並結案">
+          <div class="track-hint">📮 填入物流單號後系統將自動：寄出通知信 → 標記已通知 → 計算處理天數 → 結案</div>
         </div>
       </div>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label>備註（附加，不覆蓋舊內容）</label>
-        <textarea id="caseNote" placeholder="輸入處理備註..."></textarea>
+      <div class="fg"><label>備註（附加）</label><textarea id="cn" placeholder="輸入處理備註..."></textarea></div>
+      <div class="abtns">
+        <button class="abtn abtn-p" onclick="confirmUpdate()">確認更新</button>
+        <button class="abtn abtn-n" onclick="openEmail('${c.email}','${caseId}')">✉ 寄信</button>
       </div>
-      <div style="display:flex;gap:10px;">
-        <button class="action-btn btn-primary" onclick="confirmUpdate()">確認更新</button>
-        <button class="action-btn btn-neutral" onclick="openEmail('${c.email}','${caseId}')">寄信給客戶</button>
-      </div>
-    </div>`;
-
-  document.getElementById('newStatus').addEventListener('change',function(){
-    document.getElementById('trackingWrap').style.display=['可換貨','原件退回'].includes(this.value)?'block':'none';
-  });
+    </div>`:`
+    <div class="closed-box">
+      ✅ 案件已結案<br>
+      ${c.closedDays?`⏱ 處理天數：<strong>${c.closedDays} 天</strong><br>`:''}
+      ${c.notified?'📮 已寄出通知信':''}
+    </div>`}
+  `;
+  document.getElementById('ov').classList.add('show');
+  document.getElementById('drawer').classList.add('open');
 }
+
+function onNsChange(v){document.getElementById('ts').classList.toggle('show',['可換貨','原件退回'].includes(v));}
+function closeDrawer(){document.getElementById('ov').classList.remove('show');document.getElementById('drawer').classList.remove('open');}
 
 function confirmUpdate(){
-  const status=document.getElementById('newStatus').value;
-  const trackingNo=document.getElementById('trackingNo')?.value.trim()||'';
-  const notes=document.getElementById('caseNote').value.trim();
-  const c=currentCase;
-  const isBlocked=c.warranty&&(c.warranty.includes('🚫')||c.warranty.includes('🔀'));
-  const isOver=c.warranty&&c.warranty.includes('❌');
-
-  if(isBlocked){showModal('⛔ 無法更新',`此案件判定為<strong>${c.warranty}</strong>，不允許更新狀態。`,[{label:'關閉',cls:'btn-neutral',action:closeModal}]);return;}
-
-  let body=`案件編號：<strong>${c.caseId}</strong><br>狀態：${c.status} → <strong>${status}</strong>`;
-  if(trackingNo)body+=`<br>快遞單號：${trackingNo}`;
-  if(notes)body+=`<br>備註：${notes}`;
-
-  if(isOver){
-    showModal('⚠️ 過保固警告',`此案件已<strong>過保固</strong>，確定繼續更新為「${status}」？<br><br>`+body,[
-      {label:'取消',cls:'btn-neutral',action:closeModal},
-      {label:'確定更新',cls:'btn-danger',action:()=>{closeModal();doUpdate(status,trackingNo,notes);}}
-    ]);return;
-  }
-  showModal('確認更新',body,[
-    {label:'取消',cls:'btn-neutral',action:closeModal},
-    {label:'確定',cls:'btn-primary',action:()=>{closeModal();doUpdate(status,trackingNo,notes);}}
-  ]);
+  const status=document.getElementById('ns').value;
+  const tn=(document.getElementById('tn')?.value||'').trim();
+  const note=document.getElementById('cn').value.trim();
+  const c=current;
+  if(c.warranty&&(c.warranty.includes('🚫')||c.warranty.includes('🔀'))){showModal('⛔ 無法更新',`此案件為<strong>${c.warranty}</strong>，不允許更新。`,[{l:'關閉',cls:'abtn-n',fn:closeModal}]);return;}
+  if(['可換貨','原件退回'].includes(status)&&!tn){showModal('⚠️ 請填入物流單號','填入物流單號後系統才會自動寄通知信並結案。',[{l:'我知道了',cls:'abtn-n',fn:closeModal}]);return;}
+  let body=`案件：<strong>${c.caseId}</strong><br>狀態：${c.status} → <strong>${status}</strong>`;
+  if(tn)body+=`<br>物流單號：<strong>${tn}</strong>`;
+  if(note)body+=`<br>備註：${note}`;
+  if(['可換貨','原件退回'].includes(status))body+=`<br><br>📮 系統將自動寄通知信並結案`;
+  const acts=c.warranty&&c.warranty.includes('❌')
+    ?[{l:'取消',cls:'abtn-n',fn:closeModal},{l:'確定（過保固）',cls:'abtn-d',fn:()=>{closeModal();doUpdate(status,tn,note);}}]
+    :[{l:'取消',cls:'abtn-n',fn:closeModal},{l:'確定',cls:'abtn-p',fn:()=>{closeModal();doUpdate(status,tn,note);}}];
+  showModal(c.warranty&&c.warranty.includes('❌')?'⚠️ 過保固警告':'確認更新',body,acts);
 }
 
-async function doUpdate(status,trackingNo,notes){
+async function doUpdate(status,tn,note){
   try{
-    const r=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'updateStatus',caseId:currentCase.caseId,brand:currentCase.brand,status,trackingNo,notes})});
-    const d=await r.json();
+    const d=await(await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatus',caseId:current.caseId,brand:current.brand,status,trackingNo:tn,notes:note})})).json();
     if(d.success){
-      const idx=allCases.findIndex(c=>c.caseId===currentCase.caseId);
-      if(idx>=0)allCases[idx].status=status;
-      currentCase.status=status;
-      showToast('✓ 已更新','success');updateStats();renderList();openCase(currentCase.caseId,currentCase.brand);
-    }else showToast('更新失敗：'+(d.error||''),'error');
-  }catch(e){showToast('網路錯誤','error');}
+      const idx=cases.findIndex(c=>c.caseId===current.caseId);
+      if(idx>=0){cases[idx].status=d.finalStatus||status;if(tn)cases[idx].notified=true;if(d.closedDays)cases[idx].closedDays=d.closedDays;}
+      showToast('✓ 已更新','s');calcStats();renderTable();
+      current=cases.find(c=>c.caseId===current.caseId);
+      if(current)openDrawer(current.caseId);
+    }else showToast('更新失敗：'+(d.error||''),'e');
+  }catch{showToast('網路錯誤','e');}
 }
 
-function openEmail(email,caseId){window.open(`mailto:${email}?subject=${encodeURIComponent('[AGM 保修] 案件 '+caseId+' 更新通知')}`);}
+function openEmail(email,id){if(email)window.open(`mailto:${email}?subject=${encodeURIComponent('[AGM保修] 案件'+id+'更新通知')}`);}
 
-function showModal(title,body,actions){
-  document.getElementById('modalTitle').innerHTML=title;
-  document.getElementById('modalBody').innerHTML=body;
-  document.getElementById('modalActions').innerHTML=actions.map((a,i)=>`<button class="action-btn ${a.cls}" id="ma${i}">${a.label}</button>`).join('');
-  actions.forEach((a,i)=>{document.getElementById('ma'+i).onclick=a.action;});
-  document.getElementById('modalOverlay').classList.add('show');
+function showModal(title,body,acts){
+  document.getElementById('mTitle').innerHTML=title;
+  document.getElementById('mBody').innerHTML=body;
+  document.getElementById('mActs').innerHTML=acts.map((a,i)=>`<button class="abtn ${a.cls}" id="ma${i}">${a.l}</button>`).join('');
+  acts.forEach((a,i)=>{document.getElementById('ma'+i).onclick=a.fn;});
+  document.getElementById('mOv').classList.add('show');
 }
-function closeModal(){document.getElementById('modalOverlay').classList.remove('show');}
-document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+function closeModal(){document.getElementById('mOv').classList.remove('show');}
+document.getElementById('mOv').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
-function showToast(msg,type='success'){
-  const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+type;
-  setTimeout(()=>t.classList.remove('show'),3000);
-}
+function showToast(msg,t='s'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show '+t;setTimeout(()=>el.classList.remove('show'),3000);}
 
 loadCases();
 </script>
