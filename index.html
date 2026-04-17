@@ -378,7 +378,7 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
       </div>
 
       <div class="form-row">
-        <div class="form-group"><label>購買日期</label><input type="date" id="f-purchaseDate" onchange="checkWarrantyFront()"></div>
+        <div class="form-group"><label>購買日期</label><input type="date" id="f-purchaseDate" min="2010-01-01" max="" onchange="checkWarrantyFront()" oninput="limitDate(this)"></div>
         <div class="form-group"><label>購買通路</label><input type="text" id="f-channel" placeholder="例：PChome、燦坤、三井"></div>
       </div>
       <!-- 保固即時檢查結果 -->
@@ -478,8 +478,6 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
       <button class="quick-chip" onclick="setSubject('保固期間查詢',this)">🛡 保固期間</button>
       <button class="quick-chip" onclick="setSubject('進度查詢',this)">🔍 進度查詢</button>
       <button class="quick-chip" onclick="setSubject('寄件方式說明',this)">📦 寄件方式</button>
-      <button class="quick-chip" onclick="setSubject('換貨申請',this)">🔄 換貨申請</button>
-      <button class="quick-chip" onclick="setSubject('付費維修詢問',this)">💰 付費維修</button>
       <button class="quick-chip" onclick="setSubject('其他問題',this)">💬 其他問題</button>
     </div>
     <div class="form-row" style="margin-top:16px;">
@@ -555,6 +553,20 @@ const WARRANTY_RULES = {
 const NON_WARRANTY_KEYWORDS = ['滑鼠墊','mousepad','mouse pad','rival 105','耗材','consumable'];
 
 function fmt(d){ return d.toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}); }
+
+// 日期上下限防呆
+function limitDate(input) {
+  const today = new Date().toISOString().split('T')[0];
+  input.max = today; // 不能選未來
+  if (input.value > today) input.value = today;
+  if (input.value < '2010-01-01') input.value = '2010-01-01';
+}
+
+// 頁面載入時設定日期上限
+document.addEventListener('DOMContentLoaded', () => {
+  const dateInput = document.getElementById('f-purchaseDate');
+  if (dateInput) dateInput.max = new Date().toISOString().split('T')[0];
+});
 
 function checkWarrantyFront() {
   const brand = selectedBrand;
