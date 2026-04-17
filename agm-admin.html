@@ -177,7 +177,10 @@ textarea:focus{border-color:var(--accent);}
     <div class="fchip active" onclick="setBrand('ALL',this)">全部品牌</div>
     <div class="fchip" onclick="setBrand('SteelSeries',this)">SteelSeries</div>
     <div class="fchip" onclick="setBrand('Razer',this)">Razer</div>
-    <div class="fchip" onclick="setBrand('其他品牌',this)">其他品牌</div>
+    <div class="fchip" onclick="setBrand('羅技(Logitech)',this)">Logitech</div>
+    <div class="fchip" onclick="setBrand('Acer/Acer Predator',this)">Acer/Predator</div>
+    <div class="fchip" onclick="setBrand('AGM',this)">AGM 自有</div>
+    <div class="fchip" onclick="setBrand('Xbox 手把',this)">Xbox</div>
   </div>
   <span class="count-lbl" id="countLbl">共 0 筆</span>
 </div>
@@ -191,11 +194,12 @@ textarea:focus{border-color:var(--accent);}
         <th>品牌</th>
         <th>姓名</th>
         <th>產品</th>
-        <th>申請日</th>
+        <th>申請日期</th>
         <th>狀態</th>
-        <th style="text-align:center;">天數</th>
         <th style="text-align:center;">保固</th>
         <th style="text-align:center;">通知信</th>
+        <th style="text-align:right;">原價</th>
+        <th style="text-align:center;">工作天數</th>
       </tr>
     </thead>
     <tbody id="tbody">
@@ -254,19 +258,42 @@ function calcStats(){
 function setBrand(v,el){fBrand=v;el.closest('.filter-grp').querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderTable();}
 function setStatus(v,el){fStatus=v;document.querySelectorAll('.stat-pill').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderTable();}
 
+// 品牌顯示縮寫
+function brandShort(brand){
+  const map={'SteelSeries':'SS','Razer':'Razer','羅技(Logitech)':'Logitech','Acer/Acer Predator':'Acer','Xbox 手把':'Xbox','其他品牌 (由宏碁遊戲代理)':'AGM','AGM':'AGM'};
+  return map[brand]||brand;
+}
+
+// 品牌徽章顏色
+function brandBadge(brand){
+  const b=brandShort(brand);
+  const colors={'SS':'#4a90d9','Razer':'#44b244','Logitech':'#1e4fa8','Acer':'#ed7d31','Xbox':'#107c10','AGM':'#7c4dff'};
+  const c=colors[b]||'#9aa0a6';
+  return `<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:${c}18;color:${c};border:1px solid ${c}44;">${b}</span>`;
+}
+
+// 品牌篩選邏輯：Other 子品牌要從 brand 欄位直接比對
+function matchBrand(c){
+  if(fBrand==='ALL')return true;
+  // SS 和 Razer 直接比對
+  if(fBrand==='SteelSeries'||fBrand==='Razer')return c.brand===fBrand;
+  // 其他子品牌：從 subBrand（Other表單的E欄品牌）比對
+  return (c.subBrand||c.brand)===fBrand;
+}
+
 function renderTable(){
   const q=document.getElementById('searchInput').value.toLowerCase();
   let list=cases.filter(c=>{
-    if(fBrand!=='ALL'&&c.brand!==fBrand)return false;
+    if(!matchBrand(c))return false;
     if(fStatus==='WARRANTY')return c.warranty&&(c.warranty.includes('❌')||c.warranty.includes('🚫')||c.warranty.includes('🔀'));
     if(fStatus==='已結案')return DONE.includes(c.status);
     if(fStatus!=='ALL'&&c.status!==fStatus)return false;
-    if(q&&![(c.caseId||''),(c.name||''),(c.product||''),(c.email||'')].join(' ').toLowerCase().includes(q))return false;
+    if(q&&![(c.caseId||''),(c.name||''),(c.product||''),(c.email||''),(c.subBrand||c.brand||'')].join(' ').toLowerCase().includes(q))return false;
     return true;
   });
   list.sort((a,b)=>{const ad=DONE.includes(a.status),bd=DONE.includes(b.status);if(ad!==bd)return ad?1:-1;return new Date(b.submitDate)-new Date(a.submitDate);});
   document.getElementById('countLbl').textContent=`共 ${list.length} 筆`;
-  if(!list.length){document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="9">📭 無符合案件</td></tr>';return;}
+  if(!list.length){document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="10">📭 無符合案件</td></tr>';return;}
 
   const today=new Date();today.setHours(0,0,0,0);
   document.getElementById('tbody').innerHTML=list.map(c=>{
@@ -277,19 +304,22 @@ function renderTable(){
     const dCls=isDone?'d-ok':days>=14?'d-warn':'';
     let wdot='<span class="wdot w-none"></span>';
     if(c.warranty){if(c.warranty.includes('✅'))wdot='<span class="wdot w-ok"></span>';else if(c.warranty.includes('❌')||c.warranty.includes('🚫')||c.warranty.includes('🔀'))wdot='<span class="wdot w-ng"></span>';else wdot='<span class="wdot w-warn"></span>';}
-    const dateStr=sd?sd.toLocaleDateString('zh-TW',{month:'2-digit',day:'2-digit'}):'—';
-    const brandShort=c.brand==='SteelSeries'?'SS':c.brand==='其他品牌'?'Other':c.brand;
+    // 完整年份日期
+    const dateStr=sd?sd.toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}):'—';
     const statusKey=isDone?'已結案':c.status;
+    const priceStr=c.msrp?'$'+Number(c.msrp).toLocaleString():'—';
+    const displayBrand=c.subBrand||c.brand;
     return`<tr onclick="openDrawer('${c.caseId}')" class="${current?.caseId===c.caseId?'sel':''}">
       <td class="td-id">${c.caseId}</td>
-      <td>${brandShort}</td>
+      <td>${brandBadge(displayBrand)}</td>
       <td class="td-name">${c.name||'—'}</td>
       <td class="td-product" title="${c.product||''}">${c.product||'—'}</td>
       <td class="td-date">${dateStr}</td>
       <td><span class="badge b-${statusKey}">${statusKey}</span></td>
-      <td class="td-days ${dCls}">${daysDisp}</td>
       <td style="text-align:center">${wdot}</td>
       <td class="td-notify">${c.notified?'✅':'—'}</td>
+      <td style="text-align:right;font-weight:600;color:var(--text2);font-size:13px;">${priceStr}</td>
+      <td class="td-days ${dCls}" style="text-align:center">${daysDisp}</td>
     </tr>`;
   }).join('');
 }
@@ -315,20 +345,29 @@ function openDrawer(caseId){
       <div class="ditem full"><div class="dlbl">Email</div><div class="dval">${c.email||'—'}</div></div>
       <div class="ditem full"><div class="dlbl">產品</div><div class="dval">${c.product||'—'}</div></div>
       <div class="ditem"><div class="dlbl">AGM PN</div><div class="dval">${c.agmPn||'—'}</div></div>
+      <div class="ditem"><div class="dlbl">報修品原價</div><div class="dval" style="font-weight:700;color:var(--accent);">${c.msrp?'$'+Number(c.msrp).toLocaleString():'—'}</div></div>
       <div class="ditem"><div class="dlbl">進行天數</div><div class="dval" style="font-weight:700;color:${days>=14?'var(--warning)':'var(--text)'}">${days!==null?days+' 天':'—'}</div></div>
       <div class="ditem"><div class="dlbl">通知信</div><div class="dval">${c.notified?'✅ 已寄出':'— 未寄'}</div></div>
       <div class="ditem"><div class="dlbl">目前狀態</div><div class="dval"><span class="badge b-${isDone?'已結案':c.status}">${isDone?'已結案':c.status}</span></div></div>
+      <div class="ditem"><div class="dlbl">申請日期</div><div class="dval">${sd?sd.toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}):'—'}</div></div>
     </div>
 
     ${!isDone?`
     <div class="af">
       <div class="af-title">更新案件</div>
       <div class="fg"><label>更新狀態</label><select id="ns" onchange="onNsChange(this.value)">${sopts}</select></div>
+
+      ${c.brand==='SteelSeries'?`
+      <div class="fg" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div><label>OI 單號（進貨單）</label><input type="text" id="oi-no" placeholder="SGOI24XXXXXX" value="${c.oiNo||''}"></div>
+        <div><label>OO 單號（出貨單）</label><input type="text" id="oo-no" placeholder="SGOO24XXXXXX" value="${c.ooNo||''}"></div>
+      </div>`:''}
+
       <div class="track-section ${['可換貨','原件退回'].includes(c.status)?'show':''}" id="ts">
         <div class="fg">
           <label>快遞 / 物流單號 <span style="color:var(--danger)">*</span></label>
           <input type="text" id="tn" placeholder="填入後自動寄通知信並結案">
-          <div class="track-hint">📮 填入物流單號後系統將自動：寄出通知信 → 標記已通知 → 計算處理天數 → 結案</div>
+          <div class="track-hint">📮 填入物流單號後：自動寄通知信 → 標記已通知 → 記錄天數 → 結案</div>
         </div>
       </div>
       <div class="fg"><label>備註（附加）</label><textarea id="cn" placeholder="輸入處理備註..."></textarea></div>
@@ -341,6 +380,8 @@ function openDrawer(caseId){
       ✅ 案件已結案<br>
       ${c.closedDays?`⏱ 處理天數：<strong>${c.closedDays} 天</strong><br>`:''}
       ${c.notified?'📮 已寄出通知信':''}
+      ${c.oiNo?`<br>OI 單號：${c.oiNo}`:''}
+      ${c.ooNo?`<br>OO 單號：${c.ooNo}`:''}
     </div>`}
   `;
   document.getElementById('ov').classList.add('show');
@@ -354,25 +395,29 @@ function confirmUpdate(){
   const status=document.getElementById('ns').value;
   const tn=(document.getElementById('tn')?.value||'').trim();
   const note=document.getElementById('cn').value.trim();
+  const oiNo=(document.getElementById('oi-no')?.value||'').trim();
+  const ooNo=(document.getElementById('oo-no')?.value||'').trim();
   const c=current;
   if(c.warranty&&(c.warranty.includes('🚫')||c.warranty.includes('🔀'))){showModal('⛔ 無法更新',`此案件為<strong>${c.warranty}</strong>，不允許更新。`,[{l:'關閉',cls:'abtn-n',fn:closeModal}]);return;}
   if(['可換貨','原件退回'].includes(status)&&!tn){showModal('⚠️ 請填入物流單號','填入物流單號後系統才會自動寄通知信並結案。',[{l:'我知道了',cls:'abtn-n',fn:closeModal}]);return;}
   let body=`案件：<strong>${c.caseId}</strong><br>狀態：${c.status} → <strong>${status}</strong>`;
   if(tn)body+=`<br>物流單號：<strong>${tn}</strong>`;
+  if(oiNo)body+=`<br>OI 單號：${oiNo}`;
+  if(ooNo)body+=`<br>OO 單號：${ooNo}`;
   if(note)body+=`<br>備註：${note}`;
   if(['可換貨','原件退回'].includes(status))body+=`<br><br>📮 系統將自動寄通知信並結案`;
   const acts=c.warranty&&c.warranty.includes('❌')
-    ?[{l:'取消',cls:'abtn-n',fn:closeModal},{l:'確定（過保固）',cls:'abtn-d',fn:()=>{closeModal();doUpdate(status,tn,note);}}]
-    :[{l:'取消',cls:'abtn-n',fn:closeModal},{l:'確定',cls:'abtn-p',fn:()=>{closeModal();doUpdate(status,tn,note);}}];
+    ?[{l:'取消',cls:'abtn-n',fn:closeModal},{l:'確定（過保固）',cls:'abtn-d',fn:()=>{closeModal();doUpdate(status,tn,note,oiNo,ooNo);}}]
+    :[{l:'取消',cls:'abtn-n',fn:closeModal},{l:'確定',cls:'abtn-p',fn:()=>{closeModal();doUpdate(status,tn,note,oiNo,ooNo);}}];
   showModal(c.warranty&&c.warranty.includes('❌')?'⚠️ 過保固警告':'確認更新',body,acts);
 }
 
-async function doUpdate(status,tn,note){
+async function doUpdate(status,tn,note,oiNo,ooNo){
   try{
-    const d=await(await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatus',caseId:current.caseId,brand:current.brand,status,trackingNo:tn,notes:note})})).json();
+    const d=await(await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatus',caseId:current.caseId,brand:current.brand,status,trackingNo:tn,notes:note,oiNo,ooNo})})).json();
     if(d.success){
       const idx=cases.findIndex(c=>c.caseId===current.caseId);
-      if(idx>=0){cases[idx].status=d.finalStatus||status;if(tn)cases[idx].notified=true;if(d.closedDays)cases[idx].closedDays=d.closedDays;}
+      if(idx>=0){cases[idx].status=d.finalStatus||status;if(tn)cases[idx].notified=true;if(d.closedDays)cases[idx].closedDays=d.closedDays;if(oiNo)cases[idx].oiNo=oiNo;if(ooNo)cases[idx].ooNo=ooNo;}
       showToast('✓ 已更新','s');calcStats();renderTable();
       current=cases.find(c=>c.caseId===current.caseId);
       if(current)openDrawer(current.caseId);
