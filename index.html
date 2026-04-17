@@ -4,626 +4,292 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AGM 宏碁遊戲 保修服務</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Inter:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0c10;
-  --surface: #12151c;
-  --surface2: #1a1e28;
-  --border: #2a2f3d;
-  --accent: #00d4ff;
-  --accent2: #7b61ff;
-  --success: #00e676;
-  --warning: #ffb300;
-  --danger: #ff5252;
-  --text: #e8eaf0;
-  --text2: #8892a4;
-  --text3: #4a5568;
+  --bg: #f5f7fa;
+  --white: #ffffff;
+  --surface2: #f0f4f8;
+  --border: #d8e0ea;
+  --border2: #b8c8da;
+  --accent: #1a73e8;
+  --accent-light: #e8f0fe;
+  --accent-hover: #1557b0;
+  --success: #1e8e3e;
+  --success-bg: #e6f4ea;
+  --warning: #e37400;
+  --warning-bg: #fef7e0;
+  --danger: #d93025;
+  --danger-bg: #fce8e6;
+  --text: #202124;
+  --text2: #5f6368;
+  --text3: #9aa0a6;
+  --shadow: 0 1px 6px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,0.12);
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--text); font-family:'Noto Sans TC',sans-serif; font-size:16px; line-height:1.7; min-height:100vh; }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Noto Sans TC', sans-serif;
-  font-size: 14px;
-  line-height: 1.6;
-  min-height: 100vh;
-}
-
-/* ── 背景光暈 ── */
-body::before {
-  content: '';
-  position: fixed;
-  top: -20%;
-  left: -10%;
-  width: 60%;
-  height: 60%;
-  background: radial-gradient(ellipse, rgba(0,212,255,0.06) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-body::after {
-  content: '';
-  position: fixed;
-  bottom: -20%;
-  right: -10%;
-  width: 50%;
-  height: 50%;
-  background: radial-gradient(ellipse, rgba(123,97,255,0.05) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* ── Header ── */
 header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(10,12,16,0.85);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
+  background:var(--white); border-bottom:1px solid var(--border); box-shadow:var(--shadow);
+  padding:0 28px; height:66px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:100;
 }
-.logo {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--text);
-}
-.logo span { color: var(--accent); }
+.logo { font-family:'Inter',sans-serif; font-size:20px; font-weight:700; color:var(--text); }
+.logo span { color:var(--accent); }
 .admin-link {
-  font-size: 12px;
-  color: var(--text3);
-  text-decoration: none;
-  padding: 6px 12px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  transition: all .2s;
+  font-size:14px; color:var(--text2); text-decoration:none;
+  padding:8px 16px; border:1.5px solid var(--border2); border-radius:8px;
+  transition:all .2s; font-weight:500;
 }
-.admin-link:hover { color: var(--text2); border-color: var(--text3); }
+.admin-link:hover { background:var(--surface2); color:var(--text); }
 
-/* ── Tabs ── */
 .tabs {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  padding: 24px 24px 0;
-  border-bottom: 1px solid var(--border);
+  background:var(--white); border-bottom:2px solid var(--border);
+  display:flex; justify-content:center; padding:0 28px;
 }
 .tab-btn {
-  background: none;
-  border: none;
-  color: var(--text2);
-  font-family: 'Noto Sans TC', sans-serif;
-  font-size: 14px;
-  padding: 10px 24px;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all .2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: relative;
-  bottom: -1px;
+  background:none; border:none; border-bottom:3px solid transparent;
+  color:var(--text2); font-family:'Noto Sans TC',sans-serif; font-size:16px; font-weight:500;
+  padding:14px 28px; cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; gap:8px; margin-bottom:-2px;
 }
-.tab-btn:hover { color: var(--text); }
-.tab-btn.active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
-}
-.tab-icon { font-size: 16px; }
+.tab-btn:hover { color:var(--accent); background:var(--accent-light); }
+.tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
 
-/* ── Main Content ── */
-main {
-  position: relative;
-  z-index: 1;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 32px 24px 80px;
-}
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
+main { max-width:780px; margin:0 auto; padding:32px 20px 80px; }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
 
-/* ── Section Title ── */
-.section-title {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
-}
-.section-desc {
-  color: var(--text2);
-  font-size: 13px;
-  margin-bottom: 28px;
-}
+.section-title { font-family:'Inter',sans-serif; font-size:26px; font-weight:700; margin-bottom:6px; }
+.section-desc { font-size:15px; color:var(--text2); margin-bottom:24px; }
 
-/* ── Info Banner ── */
 .info-banner {
-  background: rgba(0,212,255,0.06);
-  border: 1px solid rgba(0,212,255,0.2);
-  border-radius: 8px;
-  padding: 14px 16px;
-  margin-bottom: 24px;
-  font-size: 13px;
-  color: var(--text2);
-  line-height: 1.8;
+  background:var(--accent-light); border:1px solid #bdd0f8; border-radius:10px;
+  padding:16px 20px; margin-bottom:24px; font-size:15px; color:#1a4fa8; line-height:1.8;
 }
-.info-banner strong { color: var(--accent); }
+.info-banner strong { font-weight:700; }
 
-/* ── Form ── */
-.form-group {
-  margin-bottom: 18px;
+.card {
+  background:var(--white); border:1px solid var(--border); border-radius:12px;
+  box-shadow:var(--shadow); padding:28px; margin-bottom:20px;
 }
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text2);
-  margin-bottom: 6px;
-  letter-spacing: 0.5px;
-}
-label .req { color: var(--accent); margin-left: 2px; }
-input, select, textarea {
-  width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--text);
-  font-family: 'Noto Sans TC', sans-serif;
-  font-size: 14px;
-  padding: 10px 13px;
-  transition: border-color .2s, background .2s;
-  outline: none;
-  -webkit-appearance: none;
-}
-input:focus, select:focus, textarea:focus {
-  border-color: var(--accent);
-  background: var(--surface2);
-}
-input::placeholder, textarea::placeholder { color: var(--text3); }
-select option { background: var(--surface2); }
-textarea { resize: vertical; min-height: 90px; }
-.char-count { text-align: right; font-size: 11px; color: var(--text3); margin-top: 4px; }
 
-/* ── 品牌選擇 ── */
-.brand-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 4px;
+.form-group { margin-bottom:20px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.section-sub {
+  font-size:13px; font-weight:700; color:var(--text3); letter-spacing:1px;
+  text-transform:uppercase; margin:24px 0 14px; padding-bottom:8px; border-bottom:1px solid var(--border);
 }
+
+label { display:block; font-size:15px; font-weight:500; color:var(--text); margin-bottom:7px; }
+label .req { color:var(--danger); margin-left:2px; }
+
+input[type=text],input[type=email],input[type=tel],input[type=date],select,textarea {
+  width:100%; background:var(--white); border:1.5px solid var(--border2); border-radius:8px;
+  color:var(--text); font-family:'Noto Sans TC',sans-serif; font-size:15px; padding:11px 14px;
+  transition:border-color .2s,box-shadow .2s; outline:none; -webkit-appearance:none;
+}
+input:focus,select:focus,textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(26,115,232,0.12); }
+input::placeholder,textarea::placeholder { color:var(--text3); }
+textarea { resize:vertical; min-height:100px; }
+.char-count { text-align:right; font-size:13px; color:var(--text3); margin-top:5px; }
+
+.brand-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
 .brand-card {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px;
-  cursor: pointer;
-  text-align: center;
-  transition: all .2s;
-  background: var(--surface);
-  font-size: 13px;
-  color: var(--text2);
-  user-select: none;
+  border:2px solid var(--border2); border-radius:10px; padding:14px 10px;
+  cursor:pointer; text-align:center; transition:all .2s; background:var(--white);
+  font-size:14px; font-weight:500; color:var(--text2); user-select:none;
 }
-.brand-card:hover { border-color: var(--text3); color: var(--text); }
-.brand-card.selected {
-  border-color: var(--accent);
-  background: rgba(0,212,255,0.08);
-  color: var(--accent);
-}
-.brand-card .brand-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+.brand-card:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-light); }
+.brand-card.selected { border-color:var(--accent); background:var(--accent-light); color:var(--accent); }
+.brand-card .brand-icon { font-size:26px; display:block; margin-bottom:6px; }
 
-/* ── 通路類型 ── */
-.radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+.radio-group { display:flex; gap:10px; flex-wrap:wrap; }
 .radio-card {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 8px 14px;
-  cursor: pointer;
-  font-size: 13px;
-  color: var(--text2);
-  transition: all .2s;
-  user-select: none;
+  border:2px solid var(--border2); border-radius:8px; padding:9px 18px;
+  cursor:pointer; font-size:14px; font-weight:500; color:var(--text2);
+  transition:all .2s; user-select:none; background:var(--white);
 }
-.radio-card:hover { border-color: var(--text3); color: var(--text); }
-.radio-card.selected { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.06); }
+.radio-card:hover { border-color:var(--accent); color:var(--accent); }
+.radio-card.selected { border-color:var(--accent); color:var(--accent); background:var(--accent-light); }
 
-/* ── 上傳區 ── */
 .upload-zone {
-  border: 2px dashed var(--border);
-  border-radius: 8px;
-  padding: 24px;
-  text-align: center;
-  cursor: pointer;
-  transition: all .2s;
-  position: relative;
+  border:2px dashed var(--border2); border-radius:10px; padding:28px;
+  text-align:center; cursor:pointer; transition:all .2s; position:relative; background:var(--surface2);
 }
-.upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: rgba(0,212,255,0.04); }
-.upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.upload-icon { font-size: 28px; margin-bottom: 8px; }
-.upload-text { font-size: 13px; color: var(--text2); }
-.upload-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.upload-zone:hover,.upload-zone.drag { border-color:var(--accent); background:var(--accent-light); }
+.upload-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.upload-icon { font-size:32px; margin-bottom:8px; }
+.upload-text { font-size:15px; color:var(--text2); font-weight:500; }
+.upload-hint { font-size:13px; color:var(--text3); margin-top:4px; }
 .upload-preview {
-  display: none;
-  align-items: center;
-  gap: 10px;
-  background: rgba(0,230,118,0.08);
-  border: 1px solid rgba(0,230,118,0.3);
-  border-radius: 6px;
-  padding: 10px 14px;
-  margin-top: 10px;
-  font-size: 13px;
-  color: var(--success);
+  display:none; align-items:center; gap:10px;
+  background:var(--success-bg); border:1px solid #a8d5b5; border-radius:8px;
+  padding:12px 16px; margin-top:10px; font-size:15px; color:var(--success); font-weight:500;
 }
-.upload-preview.show { display: flex; }
-.progress-bar { width: 100%; height: 3px; background: var(--border); border-radius: 2px; margin-top: 8px; display: none; }
-.progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .3s; width: 0%; }
+.upload-preview.show { display:flex; }
+.progress-bar { width:100%; height:4px; background:var(--border); border-radius:2px; margin-top:10px; display:none; }
+.progress-fill { height:100%; background:var(--accent); border-radius:2px; transition:width .3s; width:0%; }
 
-/* ── 同意條款 ── */
 .agree-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 14px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  cursor: pointer;
+  display:flex; align-items:flex-start; gap:12px; padding:16px 18px;
+  background:var(--surface2); border:1.5px solid var(--border2); border-radius:10px; cursor:pointer;
 }
-.agree-row input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); flex-shrink: 0; margin-top: 2px; }
-.agree-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.agree-row input[type=checkbox] { width:18px; height:18px; accent-color:var(--accent); flex-shrink:0; margin-top:3px; }
+.agree-text { font-size:14px; color:var(--text2); line-height:1.7; }
 
-/* ── 提交按鈕 ── */
 .submit-btn {
-  width: 100%;
-  padding: 14px;
-  background: var(--accent);
-  color: #000;
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all .2s;
-  margin-top: 8px;
+  width:100%; padding:15px; background:var(--accent); color:#fff;
+  font-family:'Noto Sans TC',sans-serif; font-size:17px; font-weight:700;
+  border:none; border-radius:10px; cursor:pointer; transition:all .2s; margin-top:10px;
 }
-.submit-btn:hover:not(:disabled) { background: #33ddff; transform: translateY(-1px); }
-.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.submit-btn:hover:not(:disabled) { background:var(--accent-hover); transform:translateY(-1px); box-shadow:var(--shadow-lg); }
+.submit-btn:disabled { opacity:.5; cursor:not-allowed; }
 
-/* ── 成功畫面 ── */
-.success-panel {
-  display: none;
-  text-align: center;
-  padding: 40px 20px;
-  animation: fadeIn .4s ease;
-}
-.success-panel.show { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.success-icon { font-size: 56px; margin-bottom: 16px; }
-.success-title {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--success);
-  margin-bottom: 8px;
-}
-.success-desc { color: var(--text2); margin-bottom: 24px; }
-.case-badge {
-  display: inline-block;
-  background: var(--surface2);
-  border: 1px solid var(--accent);
-  border-radius: 8px;
-  padding: 14px 24px;
-  margin-bottom: 24px;
-}
-.case-badge .label { font-size: 11px; color: var(--text3); letter-spacing: 1px; }
-.case-badge .value { font-family: 'Rajdhani', sans-serif; font-size: 24px; font-weight: 700; color: var(--accent); }
-.address-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
-  text-align: left;
-  margin-bottom: 20px;
-}
-.address-box h4 { font-size: 12px; color: var(--text3); letter-spacing: 1px; margin-bottom: 8px; }
-.address-box p { font-size: 14px; color: var(--text); }
-.success-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 .btn-outline {
-  padding: 10px 20px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--text2);
-  background: none;
-  cursor: pointer;
-  font-size: 13px;
-  font-family: 'Noto Sans TC', sans-serif;
-  transition: all .2s;
+  padding:11px 22px; border:1.5px solid var(--border2); border-radius:8px;
+  color:var(--text2); background:var(--white); cursor:pointer; font-size:15px;
+  font-family:'Noto Sans TC',sans-serif; font-weight:500; transition:all .2s;
 }
-.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-outline:hover { border-color:var(--accent); color:var(--accent); }
 .btn-primary {
-  padding: 10px 20px;
-  border: 1px solid var(--accent);
-  border-radius: 6px;
-  color: var(--accent);
-  background: rgba(0,212,255,0.08);
-  cursor: pointer;
-  font-size: 13px;
-  font-family: 'Noto Sans TC', sans-serif;
-  transition: all .2s;
+  padding:11px 22px; border:none; border-radius:8px; color:#fff; background:var(--accent);
+  cursor:pointer; font-size:15px; font-family:'Noto Sans TC',sans-serif; font-weight:700; transition:all .2s;
 }
-.btn-primary:hover { background: rgba(0,212,255,0.16); }
+.btn-primary:hover { background:var(--accent-hover); }
 
-/* ── 查詢頁 ── */
+.success-panel { display:none; text-align:center; padding:48px 20px; animation:fadeIn .4s ease; }
+.success-panel.show { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+.success-icon { font-size:64px; margin-bottom:16px; }
+.success-title { font-family:'Inter',sans-serif; font-size:30px; font-weight:700; color:var(--success); margin-bottom:10px; }
+.success-desc { font-size:16px; color:var(--text2); margin-bottom:28px; }
+.case-badge {
+  display:inline-block; background:var(--accent-light); border:2px solid var(--accent);
+  border-radius:12px; padding:16px 32px; margin-bottom:28px;
+}
+.case-badge .label { font-size:13px; color:var(--text2); letter-spacing:1px; font-weight:500; }
+.case-badge .value { font-family:'Inter',sans-serif; font-size:28px; font-weight:700; color:var(--accent); }
+.address-box {
+  background:var(--surface2); border:1px solid var(--border); border-radius:10px;
+  padding:18px 20px; text-align:left; margin-bottom:24px;
+}
+.address-box h4 { font-size:13px; color:var(--text3); font-weight:700; letter-spacing:1px; margin-bottom:8px; }
+.address-box p { font-size:15px; color:var(--text); line-height:1.8; }
+.success-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
 .query-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 28px;
-  margin-bottom: 24px;
+  background:var(--white); border:1px solid var(--border); border-radius:12px;
+  box-shadow:var(--shadow); padding:28px; margin-bottom:24px;
 }
-.query-input-row { display: flex; gap: 10px; }
-.query-input-row input { flex: 1; }
+.query-input-row { display:flex; gap:10px; }
+.query-input-row input { flex:1; }
 .query-btn {
-  padding: 10px 20px;
-  background: var(--accent);
-  color: #000;
-  font-family: 'Rajdhani', sans-serif;
-  font-weight: 700;
-  letter-spacing: 1px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background .2s;
+  padding:11px 24px; background:var(--accent); color:#fff;
+  font-family:'Noto Sans TC',sans-serif; font-weight:700; font-size:15px;
+  border:none; border-radius:8px; cursor:pointer; white-space:nowrap; transition:background .2s;
 }
-.query-btn:hover { background: #33ddff; }
+.query-btn:hover { background:var(--accent-hover); }
 
 .result-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  display: none;
-  animation: fadeIn .3s ease;
+  background:var(--white); border:1px solid var(--border); border-radius:12px;
+  box-shadow:var(--shadow); padding:28px; display:none; animation:fadeIn .3s ease;
 }
-.result-card.show { display: block; }
-.result-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.result-caseid { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: var(--accent); }
-.result-brand { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.result-card.show { display:block; }
+.result-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+.result-caseid { font-family:'Inter',sans-serif; font-size:22px; font-weight:700; color:var(--accent); }
+.result-brand { font-size:14px; color:var(--text3); margin-top:3px; }
 
-/* Status Badge */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-}
-.status-完成填表 { background: rgba(74,85,104,0.4); color: #a0aec0; border: 1px solid #4a5568; }
-.status-收貨歸檔 { background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); }
-.status-排測中 { background: rgba(255,179,0,0.1); color: var(--warning); border: 1px solid rgba(255,179,0,0.3); }
-.status-可換貨 { background: rgba(0,230,118,0.1); color: var(--success); border: 1px solid rgba(0,230,118,0.3); }
-.status-原件退回 { background: rgba(123,97,255,0.1); color: var(--accent2); border: 1px solid rgba(123,97,255,0.3); }
-.status-手動結案, .status-結案 { background: rgba(74,85,104,0.3); color: #718096; border: 1px solid #4a5568; }
+.status-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:20px; font-size:14px; font-weight:600; }
+.status-完成填表 { background:#f1f3f4; color:#5f6368; }
+.status-收貨歸檔 { background:var(--accent-light); color:var(--accent); }
+.status-排測中 { background:var(--warning-bg); color:var(--warning); }
+.status-可換貨 { background:var(--success-bg); color:var(--success); }
+.status-原件退回 { background:#f3e8fd; color:#7c4dff; }
+.status-手動結案,.status-結案 { background:#f1f3f4; color:#9aa0a6; }
 
-/* Progress Steps */
-.progress-steps {
-  display: flex;
-  align-items: center;
-  margin: 20px 0;
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
-.step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-  min-width: 70px;
-  position: relative;
-}
-.step::before {
-  content: '';
-  position: absolute;
-  top: 14px;
-  left: 50%;
-  right: -50%;
-  height: 2px;
-  background: var(--border);
-  z-index: 0;
-}
-.step:last-child::before { display: none; }
-.step.done::before { background: var(--accent); }
+.progress-steps { display:flex; align-items:flex-start; margin:24px 0; overflow-x:auto; padding-bottom:4px; }
+.step { display:flex; flex-direction:column; align-items:center; flex:1; min-width:70px; position:relative; }
+.step::before { content:''; position:absolute; top:16px; left:50%; right:-50%; height:2px; background:var(--border); z-index:0; }
+.step:last-child::before { display:none; }
+.step.done::before { background:var(--accent); }
 .step-dot {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  position: relative;
-  z-index: 1;
-  transition: all .3s;
+  width:32px; height:32px; border-radius:50%; border:2px solid var(--border2); background:var(--white);
+  display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; position:relative; z-index:1; transition:all .3s;
 }
-.step.done .step-dot { border-color: var(--accent); background: var(--accent); color: #000; }
-.step.current .step-dot { border-color: var(--warning); background: rgba(255,179,0,0.15); color: var(--warning); box-shadow: 0 0 0 4px rgba(255,179,0,0.1); }
-.step-label { font-size: 10px; color: var(--text3); margin-top: 6px; text-align: center; }
-.step.done .step-label, .step.current .step-label { color: var(--text2); }
+.step.done .step-dot { border-color:var(--accent); background:var(--accent); color:#fff; }
+.step.current .step-dot { border-color:var(--warning); background:var(--warning-bg); color:var(--warning); box-shadow:0 0 0 4px rgba(227,116,0,0.15); }
+.step-label { font-size:12px; color:var(--text3); margin-top:8px; text-align:center; font-weight:500; }
+.step.done .step-label,.step.current .step-label { color:var(--text2); }
 
-.result-info { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
-.info-item { background: var(--surface2); border-radius: 6px; padding: 10px 14px; }
-.info-label { font-size: 11px; color: var(--text3); margin-bottom: 3px; }
-.info-value { font-size: 13px; color: var(--text); }
+.result-info { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:20px; }
+.info-item { background:var(--surface2); border-radius:8px; padding:12px 16px; border:1px solid var(--border); }
+.info-label { font-size:12px; color:var(--text3); font-weight:600; letter-spacing:.5px; margin-bottom:4px; }
+.info-value { font-size:15px; color:var(--text); font-weight:500; }
 
-.warranty-box {
-  margin-top: 16px;
-  padding: 12px 14px;
-  border-radius: 6px;
-  font-size: 13px;
-}
-.warranty-ok { background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.2); color: var(--success); }
-.warranty-ng { background: rgba(255,82,82,0.08); border: 1px solid rgba(255,82,82,0.2); color: var(--danger); }
-.warranty-warn { background: rgba(255,179,0,0.08); border: 1px solid rgba(255,179,0,0.2); color: var(--warning); }
+.warranty-box { margin-top:16px; padding:14px 16px; border-radius:8px; font-size:15px; font-weight:500; }
+.warranty-ok { background:var(--success-bg); border:1px solid #a8d5b5; color:var(--success); }
+.warranty-ng { background:var(--danger-bg); border:1px solid #f5b8b5; color:var(--danger); }
+.warranty-warn { background:var(--warning-bg); border:1px solid #f5dcb0; color:var(--warning); }
 
-.not-found {
-  text-align: center;
-  padding: 32px;
-  color: var(--text3);
-  display: none;
-}
-.not-found.show { display: block; }
-.not-found-icon { font-size: 40px; margin-bottom: 12px; }
+.not-found { text-align:center; padding:40px; color:var(--text3); display:none; font-size:15px; }
+.not-found.show { display:block; }
+.not-found-icon { font-size:48px; margin-bottom:14px; }
 
-/* ── 客服頁 ── */
 .contact-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 24px;
+  display:flex; align-items:center; gap:20px; background:var(--white);
+  border:1px solid var(--border); border-radius:12px; padding:22px 24px;
+  margin-bottom:28px; box-shadow:var(--shadow);
 }
-.contact-icon { font-size: 36px; }
-.contact-email-big { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: var(--accent); }
-.contact-hours { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.contact-icon { font-size:40px; }
+.contact-email-big { font-family:'Inter',sans-serif; font-size:22px; font-weight:700; color:var(--accent); }
+.contact-hours { font-size:14px; color:var(--text2); margin-top:4px; }
 
-.quick-subjects { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.quick-subjects { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
 .quick-chip {
-  padding: 6px 14px;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  font-size: 12px;
-  color: var(--text2);
-  cursor: pointer;
-  transition: all .2s;
-  background: none;
-  font-family: 'Noto Sans TC', sans-serif;
+  padding:8px 16px; border:1.5px solid var(--border2); border-radius:20px;
+  font-size:14px; color:var(--text2); cursor:pointer; transition:all .2s;
+  background:var(--white); font-family:'Noto Sans TC',sans-serif; font-weight:500;
 }
-.quick-chip:hover { border-color: var(--accent); color: var(--accent); }
+.quick-chip:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-light); }
 
 .mailto-btn {
-  width: 100%;
-  padding: 14px;
-  background: none;
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all .2s;
-  margin-top: 8px;
+  width:100%; padding:15px; background:none; border:2px solid var(--accent);
+  color:var(--accent); font-family:'Noto Sans TC',sans-serif; font-size:17px; font-weight:700;
+  border-radius:10px; cursor:pointer; transition:all .2s; margin-top:8px;
 }
-.mailto-btn:hover { background: rgba(0,212,255,0.08); }
+.mailto-btn:hover { background:var(--accent-light); }
 
-/* FAQ */
-.faq-item {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-bottom: 8px;
-  overflow: hidden;
-}
-.faq-q {
-  padding: 14px 16px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  color: var(--text);
-  background: var(--surface);
-  transition: background .2s;
-  user-select: none;
-}
-.faq-q:hover { background: var(--surface2); }
-.faq-arrow { transition: transform .2s; color: var(--text3); }
-.faq-item.open .faq-arrow { transform: rotate(180deg); }
-.faq-a {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height .3s ease;
-  background: var(--surface2);
-}
-.faq-item.open .faq-a { max-height: 200px; }
-.faq-a-inner { padding: 14px 16px; font-size: 13px; color: var(--text2); line-height: 1.8; }
+.faq-item { border:1px solid var(--border); border-radius:10px; margin-bottom:10px; overflow:hidden; background:var(--white); box-shadow:var(--shadow); }
+.faq-q { padding:16px 20px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-size:16px; font-weight:500; color:var(--text); transition:background .2s; user-select:none; }
+.faq-q:hover { background:var(--surface2); }
+.faq-arrow { transition:transform .2s; color:var(--text3); }
+.faq-item.open .faq-arrow { transform:rotate(180deg); }
+.faq-a { max-height:0; overflow:hidden; transition:max-height .3s ease; }
+.faq-item.open .faq-a { max-height:220px; }
+.faq-a-inner { padding:16px 20px; font-size:15px; color:var(--text2); line-height:1.8; background:var(--surface2); border-top:1px solid var(--border); }
 
-/* ── 分隔線 ── */
-.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
-.section-sub {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text3);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
+hr.divider { border:none; border-top:1px solid var(--border); margin:28px 0; }
 
-/* ── Error ── */
-.field-error { font-size: 11px; color: var(--danger); margin-top: 4px; display: none; }
-input.error, select.error, textarea.error { border-color: var(--danger); }
+.field-error { font-size:13px; color:var(--danger); margin-top:5px; display:none; font-weight:500; }
+input.error,select.error,textarea.error { border-color:var(--danger); box-shadow:0 0 0 3px rgba(217,48,37,0.12); }
 
-/* ── Loading ── */
 .loading-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(10,12,16,0.7);
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 16px;
+  display:none; position:fixed; inset:0; background:rgba(255,255,255,0.75);
+  z-index:200; align-items:center; justify-content:center; flex-direction:column; gap:16px;
 }
-.loading-overlay.show { display: flex; }
-.spinner {
-  width: 40px; height: 40px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin .8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-text { color: var(--text2); font-size: 13px; }
+.loading-overlay.show { display:flex; }
+.spinner { width:44px; height:44px; border:4px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.loading-text { color:var(--text2); font-size:16px; font-weight:500; }
 
-@media(max-width: 600px) {
-  .form-row { grid-template-columns: 1fr; }
-  .brand-grid { grid-template-columns: repeat(2, 1fr); }
-  .result-info { grid-template-columns: 1fr; }
-  .progress-steps { gap: 0; }
-  .step-label { font-size: 9px; }
+@media(max-width:600px) {
+  .form-row { grid-template-columns:1fr; }
+  .brand-grid { grid-template-columns:repeat(2,1fr); }
+  .result-info { grid-template-columns:1fr; }
+  .tab-btn { font-size:14px; padding:12px 14px; }
 }
 </style>
 </head>
@@ -635,279 +301,162 @@ input.error, select.error, textarea.error { border-color: var(--danger); }
 </div>
 
 <header>
-  <div class="logo">ACE<span>R</span> GAMING <span style="color:var(--text3);font-size:13px;font-weight:400;letter-spacing:1px;">保修服務</span></div>
+  <div class="logo">Acer <span>Gaming</span> 保修服務</div>
   <a href="agm-admin.html" class="admin-link">🔧 工程師後台</a>
 </header>
 
 <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('apply', this)">
-    <span class="tab-icon">📋</span> 申請保修
-  </button>
-  <button class="tab-btn" onclick="switchTab('track', this)">
-    <span class="tab-icon">🔍</span> 查詢進度
-  </button>
-  <button class="tab-btn" onclick="switchTab('contact', this)">
-    <span class="tab-icon">✉️</span> 聯絡客服
-  </button>
+  <button class="tab-btn active" onclick="switchTab('apply',this)">📋 申請保修</button>
+  <button class="tab-btn" onclick="switchTab('track',this)">🔍 查詢進度</button>
+  <button class="tab-btn" onclick="switchTab('contact',this)">✉️ 聯絡客服</button>
 </div>
 
 <main>
-
-<!-- ══════════════════════════════════════
-     申請保修
-══════════════════════════════════════ -->
+<!-- 申請保修 -->
 <div id="panel-apply" class="tab-panel active">
-
   <div id="applyForm">
     <div class="section-title">申請保修</div>
     <div class="section-desc">請填寫以下資訊，送出後將收到確認信，再依指示寄送商品。</div>
-
     <div class="info-banner">
       📦 收件地址：<strong>新北市汐止區新台五路一段84號15樓(AGM) 宏碁遊戲客服中心 收</strong><br>
       ⚠️ 請勿使用貨到付款，運費採一人一趟（客戶寄入、本公司寄回）
     </div>
-
-    <!-- 品牌選擇 -->
-    <div class="form-group">
-      <label>選擇品牌 <span class="req">*</span></label>
-      <div class="brand-grid">
-        <div class="brand-card" onclick="selectBrand('SteelSeries', this)">
-          <span class="brand-icon">🎧</span>SteelSeries
-        </div>
-        <div class="brand-card" onclick="selectBrand('Razer', this)">
-          <span class="brand-icon">🐍</span>Razer 雷蛇
-        </div>
-        <div class="brand-card" onclick="selectBrand('Logitech', this)">
-          <span class="brand-icon">🖱️</span>Logitech 羅技
-        </div>
-        <div class="brand-card" onclick="selectBrand('Acer', this)">
-          <span class="brand-icon">💻</span>Acer / Predator
-        </div>
-        <div class="brand-card" onclick="selectBrand('AGM', this)">
-          <span class="brand-icon">🏷️</span>AGM 自有品牌
-        </div>
-        <div class="brand-card" onclick="selectBrand('Xbox', this)">
-          <span class="brand-icon">🎮</span>XBOX 手把
-        </div>
-      </div>
-      <div class="field-error" id="err-brand">請選擇品牌</div>
-    </div>
-
-    <!-- Xbox 提醒 -->
-    <div id="xbox-notice" style="display:none;" class="info-banner" style="border-color:rgba(255,179,0,0.3);">
-      ⚠️ <strong>XBOX 手把</strong>僅提供購買 <strong>7 日內</strong>的新品不良（DOA）處理服務，<br>
-      且需保留完整商品包裝。超過 7 日請至
-      <a href="https://support.xbox.com/zh-TW/forms/request-controller-replacement" target="_blank" style="color:var(--accent);">Xbox 官方報修</a>。
-    </div>
-
-    <!-- 客戶資訊 -->
-    <div class="section-sub">客戶資訊</div>
-    <div class="form-row">
+    <div class="card">
       <div class="form-group">
-        <label>姓名 <span class="req">*</span></label>
-        <input type="text" id="f-name" placeholder="您的姓名">
-        <div class="field-error" id="err-name">請填寫姓名</div>
+        <label>選擇品牌 <span class="req">*</span></label>
+        <div class="brand-grid">
+          <div class="brand-card" onclick="selectBrand('SteelSeries',this)"><span class="brand-icon">🎧</span>SteelSeries</div>
+          <div class="brand-card" onclick="selectBrand('Razer',this)"><span class="brand-icon">🐍</span>Razer 雷蛇</div>
+          <div class="brand-card" onclick="selectBrand('Logitech',this)"><span class="brand-icon">🖱️</span>Logitech 羅技</div>
+          <div class="brand-card" onclick="selectBrand('Acer',this)"><span class="brand-icon">💻</span>Acer / Predator</div>
+          <div class="brand-card" onclick="selectBrand('AGM',this)"><span class="brand-icon">🏷️</span>AGM 自有品牌</div>
+          <div class="brand-card" onclick="selectBrand('Xbox',this)"><span class="brand-icon">🎮</span>XBOX 手把</div>
+        </div>
+        <div class="field-error" id="err-brand">請選擇品牌</div>
       </div>
-      <div class="form-group">
-        <label>聯絡電話 <span class="req">*</span></label>
-        <input type="tel" id="f-phone" placeholder="0912-345-678">
-        <div class="field-error" id="err-phone">請填寫電話</div>
+      <div id="xbox-notice" style="display:none;" class="info-banner">
+        ⚠️ <strong>XBOX 手把</strong>僅提供購買 <strong>7 日內</strong>新品不良（DOA）服務，需保留完整包裝。超過 7 日請至
+        <a href="https://support.xbox.com/zh-TW/forms/request-controller-replacement" target="_blank" style="color:var(--accent);font-weight:600;">Xbox 官方報修</a>。
       </div>
-    </div>
-    <div class="form-group">
-      <label>電子郵件 <span class="req">*</span></label>
-      <input type="email" id="f-email" placeholder="your@email.com">
-      <div class="field-error" id="err-email">請填寫有效的電子郵件</div>
-    </div>
-    <div class="form-group">
-      <label>收件地址 <span class="req">*</span></label>
-      <input type="text" id="f-address" placeholder="退件時寄回此地址">
-      <div class="field-error" id="err-address">請填寫地址</div>
-    </div>
 
-    <!-- 產品資訊 -->
-    <div class="section-sub" style="margin-top:20px;">產品資訊</div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>產品型號 <span class="req">*</span></label>
-        <input type="text" id="f-product" placeholder="例：Arctis Nova Pro">
-        <div class="field-error" id="err-product">請填寫產品型號</div>
-      </div>
-      <div class="form-group">
-        <label>序號 / S/N</label>
-        <input type="text" id="f-serial" placeholder="SteelSeries 請填19碼序號">
-      </div>
-    </div>
-
-    <!-- Razer 專屬 -->
-    <div id="razer-fields" style="display:none;">
+      <div class="section-sub">客戶資訊</div>
       <div class="form-row">
-        <div class="form-group">
-          <label>原廠報修單號（QA）</label>
-          <input type="text" id="f-razerCaseNo" placeholder="QA24XXXXXX（選填）">
-        </div>
-        <div class="form-group">
-          <label>購買通路</label>
-          <div class="radio-group" id="rz-channel-group">
-            <div class="radio-card selected" onclick="selectRadio('rz-channel', '個人報修', this)">個人報修</div>
-            <div class="radio-card" onclick="selectRadio('rz-channel', '通路報修', this)">通路報修</div>
-            <div class="radio-card" onclick="selectRadio('rz-channel', '燦坤通路', this)">燦坤通路</div>
+        <div class="form-group"><label>姓名 <span class="req">*</span></label><input type="text" id="f-name" placeholder="您的姓名"><div class="field-error" id="err-name">請填寫姓名</div></div>
+        <div class="form-group"><label>聯絡電話 <span class="req">*</span></label><input type="tel" id="f-phone" placeholder="0912-345-678"><div class="field-error" id="err-phone">請填寫電話</div></div>
+      </div>
+      <div class="form-group"><label>電子郵件 <span class="req">*</span></label><input type="email" id="f-email" placeholder="your@email.com"><div class="field-error" id="err-email">請填寫有效的電子郵件</div></div>
+      <div class="form-group"><label>收件地址 <span class="req">*</span>（退件時寄回此地址）</label><input type="text" id="f-address" placeholder="縣市、區、路、號"><div class="field-error" id="err-address">請填寫地址</div></div>
+
+      <div class="section-sub">產品資訊</div>
+      <div class="form-row">
+        <div class="form-group"><label>產品型號 <span class="req">*</span></label><input type="text" id="f-product" placeholder="例：Arctis Nova Pro"><div class="field-error" id="err-product">請填寫產品型號</div></div>
+        <div class="form-group"><label>序號 / S/N</label><input type="text" id="f-serial" placeholder="SteelSeries 請填19碼序號"></div>
+      </div>
+
+      <div id="razer-fields" style="display:none;">
+        <div class="form-row">
+          <div class="form-group"><label>原廠報修單號（QA）</label><input type="text" id="f-razerCaseNo" placeholder="QA24XXXXXX（選填）"></div>
+          <div class="form-group">
+            <label>購買通路類型</label>
+            <div class="radio-group" id="rz-channel-group">
+              <div class="radio-card selected" onclick="selectRadio('rz-channel','個人報修',this)">個人報修</div>
+              <div class="radio-card" onclick="selectRadio('rz-channel','通路報修',this)">通路報修</div>
+              <div class="radio-card" onclick="selectRadio('rz-channel','燦坤通路',this)">燦坤通路</div>
+            </div>
           </div>
         </div>
+        <div class="form-row">
+          <div class="form-group" id="rz-channelName-wrap" style="display:none;"><label>通路商名稱</label><input type="text" id="f-channelName" placeholder="例：德總電腦"></div>
+          <div class="form-group" id="rz-tsCaseNo-wrap" style="display:none;"><label>燦坤維修單號</label><input type="text" id="f-tsCaseNo" placeholder="燦坤維修單號"></div>
+        </div>
       </div>
+
       <div class="form-row">
-        <div class="form-group" id="rz-channelName-wrap" style="display:none;">
-          <label>通路商名稱</label>
-          <input type="text" id="f-channelName" placeholder="例：德總電腦">
-        </div>
-        <div class="form-group" id="rz-tsCaseNo-wrap" style="display:none;">
-          <label>燦坤維修單號</label>
-          <input type="text" id="f-tsCaseNo" placeholder="燦坤維修單號">
-        </div>
+        <div class="form-group"><label>購買日期</label><input type="date" id="f-purchaseDate"></div>
+        <div class="form-group"><label>購買通路</label><input type="text" id="f-channel" placeholder="例：PChome、燦坤、三井"></div>
       </div>
-    </div>
 
-    <div class="form-row">
       <div class="form-group">
-        <label>購買日期</label>
-        <input type="date" id="f-purchaseDate">
+        <label>購買憑證 <span class="req">*</span>（發票 / 收據截圖）</label>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="invoiceFile" accept="image/*,.pdf" onchange="handleFile(this)">
+          <div class="upload-icon">📎</div>
+          <div class="upload-text">點擊或拖曳圖片 / PDF 到這裡</div>
+          <div class="upload-hint">支援 JPG、PNG、PDF，最大 10MB</div>
+        </div>
+        <div class="progress-bar" id="uploadProgress"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="upload-preview" id="uploadPreview"><span>✅</span><span id="uploadFileName"></span></div>
+        <div class="field-error" id="err-invoice">請上傳購買憑證</div>
       </div>
+
+      <div class="section-sub">故障說明</div>
       <div class="form-group">
-        <label>購買通路</label>
-        <input type="text" id="f-channel" placeholder="例：PChome、燦坤、三井">
+        <label>故障描述 <span class="req">*</span></label>
+        <textarea id="f-issue" maxlength="500" placeholder="請描述故障情況及如何重現問題..." oninput="updateCount(this,'issueCount')"></textarea>
+        <div class="char-count"><span id="issueCount">0</span> / 500 字</div>
+        <div class="field-error" id="err-issue">請描述故障情況</div>
       </div>
-    </div>
+      <div class="form-group"><label>備註（選填）</label><input type="text" id="f-notes" placeholder="其他補充說明"></div>
 
-    <!-- 購買憑證 -->
-    <div class="form-group">
-      <label>購買憑證 <span class="req">*</span>（發票 / 收據截圖）</label>
-      <div class="upload-zone" id="uploadZone">
-        <input type="file" id="invoiceFile" accept="image/*,.pdf" onchange="handleFile(this)">
-        <div class="upload-icon">📎</div>
-        <div class="upload-text">點擊或拖曳圖片/PDF 到這裡</div>
-        <div class="upload-hint">支援 JPG、PNG、PDF，最大 10MB</div>
+      <div class="form-group">
+        <label class="agree-row" for="agreeCheck">
+          <input type="checkbox" id="agreeCheck">
+          <span class="agree-text">我已閱讀並同意保修服務條款。我了解保固期間以購買憑證為主；人為損壞、進水、自行拆解不在保固範圍；測試正常將原件退回。</span>
+        </label>
       </div>
-      <div class="progress-bar" id="uploadProgress">
-        <div class="progress-fill" id="progressFill"></div>
-      </div>
-      <div class="upload-preview" id="uploadPreview">
-        <span>✓</span><span id="uploadFileName"></span>
-      </div>
-      <div class="field-error" id="err-invoice">請上傳購買憑證</div>
+      <button class="submit-btn" onclick="submitForm()">提交保修申請 →</button>
     </div>
-
-    <!-- 故障描述 -->
-    <div class="form-group">
-      <label>故障描述 <span class="req">*</span></label>
-      <textarea id="f-issue" maxlength="500" placeholder="請描述故障情況及重現方式..." oninput="updateCount(this, 'issueCount')"></textarea>
-      <div class="char-count"><span id="issueCount">0</span> / 500</div>
-      <div class="field-error" id="err-issue">請描述故障情況</div>
-    </div>
-
-    <!-- 備註 -->
-    <div class="form-group">
-      <label>備註（選填）</label>
-      <input type="text" id="f-notes" placeholder="其他補充說明">
-    </div>
-
-    <!-- 同意條款 -->
-    <div class="form-group">
-      <label class="agree-row" for="agreeCheck">
-        <input type="checkbox" id="agreeCheck">
-        <span class="agree-text">
-          我已閱讀並同意保修服務條款。我了解：保固期間以購買憑證日期為主；
-          人為損壞、進水、自行拆解不在保固範圍；
-          維修過程中如測試正常將原件退回。
-        </span>
-      </label>
-    </div>
-
-    <button class="submit-btn" onclick="submitForm()">提交保修申請</button>
   </div>
 
-  <!-- 成功畫面 -->
   <div class="success-panel" id="successPanel">
     <div class="success-icon">✅</div>
     <div class="success-title">申請成功！</div>
-    <div class="success-desc">確認信已發送至您的信箱，請依指示寄送商品。</div>
-    <div class="case-badge">
-      <div class="label">案件編號</div>
-      <div class="value" id="successCaseId">—</div>
-    </div>
-    <div class="address-box">
-      <h4>📦 寄送地址</h4>
-      <p>新北市汐止區新台五路一段84號15樓(AGM)<br>宏碁遊戲客服中心 收</p>
-    </div>
+    <div class="success-desc">確認信已寄至您的信箱，請依指示寄送商品。</div>
+    <div class="case-badge"><div class="label">您的案件編號</div><div class="value" id="successCaseId">—</div></div>
+    <div class="address-box"><h4>📦 請將商品寄至</h4><p>新北市汐止區新台五路一段84號15樓(AGM)<br>宏碁遊戲客服中心 收</p></div>
     <div class="success-actions">
       <button class="btn-outline" onclick="resetApply()">再次申請</button>
-      <button class="btn-primary" onclick="goTrack()">查詢進度</button>
+      <button class="btn-primary" onclick="goTrack()">查詢維修進度</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     查詢進度
-══════════════════════════════════════ -->
+<!-- 查詢進度 -->
 <div id="panel-track" class="tab-panel">
   <div class="section-title">查詢維修進度</div>
-  <div class="section-desc">輸入您的案件編號（收到確認信後提供）查詢目前狀態。</div>
-
+  <div class="section-desc">輸入您的案件編號，即可查看目前處理狀態。</div>
   <div class="query-box">
-    <label style="margin-bottom:10px;display:block;">案件編號</label>
+    <label style="margin-bottom:10px;display:block;font-size:16px;">案件編號</label>
     <div class="query-input-row">
       <input type="text" id="queryInput" placeholder="例：AGM-SS-2501" onkeydown="if(event.key==='Enter')queryCase()">
       <button class="query-btn" onclick="queryCase()">查詢</button>
     </div>
   </div>
-
   <div class="result-card" id="resultCard">
     <div class="result-header">
-      <div>
-        <div class="result-caseid" id="r-caseId"></div>
-        <div class="result-brand" id="r-brand"></div>
-      </div>
+      <div><div class="result-caseid" id="r-caseId"></div><div class="result-brand" id="r-brand"></div></div>
       <span class="status-badge" id="r-statusBadge"></span>
     </div>
-
-    <!-- 進度條 -->
     <div class="progress-steps" id="progressSteps"></div>
-
     <div class="result-info">
-      <div class="info-item">
-        <div class="info-label">姓名</div>
-        <div class="info-value" id="r-name">—</div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">產品</div>
-        <div class="info-value" id="r-product">—</div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">申請日期</div>
-        <div class="info-value" id="r-date">—</div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">目前狀態</div>
-        <div class="info-value" id="r-status">—</div>
-      </div>
+      <div class="info-item"><div class="info-label">姓名</div><div class="info-value" id="r-name">—</div></div>
+      <div class="info-item"><div class="info-label">產品</div><div class="info-value" id="r-product">—</div></div>
+      <div class="info-item"><div class="info-label">申請日期</div><div class="info-value" id="r-date">—</div></div>
+      <div class="info-item"><div class="info-label">目前狀態</div><div class="info-value" id="r-status">—</div></div>
     </div>
-
     <div class="warranty-box" id="r-warranty" style="display:none;"></div>
   </div>
-
   <div class="not-found" id="notFound">
     <div class="not-found-icon">🔍</div>
-    <div style="color:var(--text2);margin-bottom:8px;">找不到此案件編號</div>
-    <div style="font-size:12px;">請確認編號是否正確，或聯絡客服。</div>
+    <div style="font-size:17px;font-weight:600;color:var(--text2);margin-bottom:6px;">找不到此案件編號</div>
+    <div>請確認編號是否正確，或聯絡客服。</div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     聯絡客服
-══════════════════════════════════════ -->
+<!-- 聯絡客服 -->
 <div id="panel-contact" class="tab-panel">
   <div class="section-title">聯絡客服</div>
-  <div class="section-desc">填寫以下表單，點擊送出後將開啟您的郵件程式。</div>
-
+  <div class="section-desc">填寫表單後點擊送出，將開啟您的郵件程式。</div>
   <div class="contact-header">
     <div class="contact-icon">📬</div>
     <div>
@@ -915,366 +464,148 @@ input.error, select.error, textarea.error { border-color: var(--danger); }
       <div class="contact-hours">服務時間：週一至週五 09:00–17:40（國定假日除外）</div>
     </div>
   </div>
-
-  <div class="section-sub">快速選擇主旨</div>
-  <div class="quick-subjects">
-    <button class="quick-chip" onclick="setSubject('保固期間查詢', this)">🛡 保固期間</button>
-    <button class="quick-chip" onclick="setSubject('進度查詢', this)">🔍 進度查詢</button>
-    <button class="quick-chip" onclick="setSubject('寄件方式說明', this)">📦 寄件方式</button>
-    <button class="quick-chip" onclick="setSubject('換貨申請', this)">🔄 換貨申請</button>
-    <button class="quick-chip" onclick="setSubject('付費維修詢問', this)">💰 付費維修</button>
-    <button class="quick-chip" onclick="setSubject('其他問題', this)">💬 其他問題</button>
-  </div>
-
-  <div class="form-row" style="margin-top:16px;">
-    <div class="form-group">
-      <label>您的姓名</label>
-      <input type="text" id="c-name" placeholder="姓名">
+  <div class="card">
+    <div class="section-sub" style="margin-top:0;">快速選擇主旨</div>
+    <div class="quick-subjects">
+      <button class="quick-chip" onclick="setSubject('保固期間查詢',this)">🛡 保固期間</button>
+      <button class="quick-chip" onclick="setSubject('進度查詢',this)">🔍 進度查詢</button>
+      <button class="quick-chip" onclick="setSubject('寄件方式說明',this)">📦 寄件方式</button>
+      <button class="quick-chip" onclick="setSubject('換貨申請',this)">🔄 換貨申請</button>
+      <button class="quick-chip" onclick="setSubject('付費維修詢問',this)">💰 付費維修</button>
+      <button class="quick-chip" onclick="setSubject('其他問題',this)">💬 其他問題</button>
     </div>
-    <div class="form-group">
-      <label>您的 Email</label>
-      <input type="email" id="c-email" placeholder="your@email.com">
+    <div class="form-row" style="margin-top:16px;">
+      <div class="form-group"><label>您的姓名</label><input type="text" id="c-name" placeholder="姓名"></div>
+      <div class="form-group"><label>您的 Email</label><input type="email" id="c-email" placeholder="your@email.com"></div>
     </div>
+    <div class="form-group"><label>案件編號（選填）</label><input type="text" id="c-caseId" placeholder="AGM-SS-XXXX"></div>
+    <div class="form-group"><label>主旨</label><input type="text" id="c-subject" placeholder="請選擇或自行輸入主旨"></div>
+    <div class="form-group"><label>詢問內容</label><textarea id="c-body" placeholder="請描述您的問題..." rows="5"></textarea></div>
+    <button class="mailto-btn" onclick="openMailto()">✉ 開啟郵件程式送出</button>
   </div>
-  <div class="form-group">
-    <label>案件編號（選填）</label>
-    <input type="text" id="c-caseId" placeholder="AGM-SS-XXXX">
-  </div>
-  <div class="form-group">
-    <label>主旨</label>
-    <input type="text" id="c-subject" placeholder="請選擇或自行輸入主旨">
-  </div>
-  <div class="form-group">
-    <label>詢問內容</label>
-    <textarea id="c-body" placeholder="請描述您的問題..." rows="5"></textarea>
-  </div>
-  <button class="mailto-btn" onclick="openMailto()">✉ 開啟郵件程式送出</button>
-
   <hr class="divider">
-
   <div class="section-sub">常見問題</div>
   <div id="faqList"></div>
 </div>
-
 </main>
 
 <script>
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxoq3IXREKj8fd5N_6H8EEL29S87FnUMgJGBzKtKuXfSAjeVRzDFyHlMG9bn8i9Iwyt/exec";
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxoq3IXREKj8fd5N_6H8EEL29S87FnUMgJGBzKtKuXfSAjeVRzDFyHlMG9bn8i9Iwyt/exec";
+let selectedBrand="",selectedChannel="個人報修",invoiceUrl="",uploadingFile=false;
 
-// ── 狀態管理 ──
-let selectedBrand = "";
-let selectedChannel = "個人報修";
-let invoiceUrl = "";
-let uploadingFile = false;
-
-// ── Tab 切換 ──
-function switchTab(tab, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-' + tab).classList.add('active');
-  btn.classList.add('active');
+function switchTab(tab,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active'); btn.classList.add('active');
 }
-
-// ── 品牌選擇 ──
-function selectBrand(brand, el) {
-  document.querySelectorAll('.brand-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedBrand = brand;
-  document.getElementById('err-brand').style.display = 'none';
-
-  // Xbox 提醒
-  document.getElementById('xbox-notice').style.display = brand === 'Xbox' ? 'block' : 'none';
-  // Razer 欄位
-  document.getElementById('razer-fields').style.display = brand === 'Razer' ? 'block' : 'none';
+function selectBrand(brand,el){
+  document.querySelectorAll('.brand-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected'); selectedBrand=brand;
+  document.getElementById('err-brand').style.display='none';
+  document.getElementById('xbox-notice').style.display=brand==='Xbox'?'block':'none';
+  document.getElementById('razer-fields').style.display=brand==='Razer'?'block':'none';
 }
-
-// ── Radio 選擇 ──
-function selectRadio(group, value, el) {
-  el.closest('.radio-group').querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+function selectRadio(group,value,el){
+  el.closest('.radio-group').querySelectorAll('.radio-card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');
-
-  if (group === 'rz-channel') {
-    selectedChannel = value;
-    document.getElementById('rz-channelName-wrap').style.display = value === '通路報修' ? 'block' : 'none';
-    document.getElementById('rz-tsCaseNo-wrap').style.display = value === '燦坤通路' ? 'block' : 'none';
+  if(group==='rz-channel'){
+    selectedChannel=value;
+    document.getElementById('rz-channelName-wrap').style.display=value==='通路報修'?'block':'none';
+    document.getElementById('rz-tsCaseNo-wrap').style.display=value==='燦坤通路'?'block':'none';
   }
 }
-
-// ── 字數計數 ──
-function updateCount(el, countId) {
-  document.getElementById(countId).textContent = el.value.length;
+function updateCount(el,id){document.getElementById(id).textContent=el.value.length;}
+function handleFile(input){
+  const file=input.files[0]; if(!file)return;
+  if(file.size>10*1024*1024){alert('檔案大小不得超過 10MB');return;}
+  const progress=document.getElementById('uploadProgress'),fill=document.getElementById('progressFill');
+  progress.style.display='block'; fill.style.width='0%'; uploadingFile=true;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    fill.style.width='80%';
+    fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'upload',fileData:reader.result.split(',')[1],mimeType:file.type,fileName:file.name})})
+      .then(r=>r.json()).then(data=>{
+        fill.style.width='100%'; setTimeout(()=>{progress.style.display='none';},400);
+        if(data.success){invoiceUrl=data.url;document.getElementById('uploadPreview').classList.add('show');document.getElementById('uploadFileName').textContent=file.name;document.getElementById('err-invoice').style.display='none';}
+        else alert('上傳失敗，請重試'); uploadingFile=false;
+      }).catch(()=>{invoiceUrl='(上傳失敗)';uploadingFile=false;progress.style.display='none';});
+  };reader.readAsDataURL(file);
 }
+const zone=document.getElementById('uploadZone');
+['dragenter','dragover'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();zone.classList.add('drag');}));
+['dragleave','drop'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();zone.classList.remove('drag');}));
+zone.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f){document.getElementById('invoiceFile').files=e.dataTransfer.files;handleFile(document.getElementById('invoiceFile'));}});
 
-// ── 檔案上傳 ──
-function handleFile(input) {
-  const file = input.files[0];
-  if (!file) return;
-  if (file.size > 10 * 1024 * 1024) {
-    alert('檔案大小不得超過 10MB');
-    return;
-  }
-
-  const progress = document.getElementById('uploadProgress');
-  const fill     = document.getElementById('progressFill');
-  progress.style.display = 'block';
-  fill.style.width = '0%';
-  uploadingFile = true;
-
-  const reader = new FileReader();
-  reader.onprogress = (e) => {
-    if (e.lengthComputable) fill.style.width = (e.loaded / e.total * 70) + '%';
-  };
-  reader.onload = () => {
-    fill.style.width = '90%';
-    const base64 = reader.result.split(',')[1];
-    fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'upload', fileData: base64, mimeType: file.type, fileName: file.name })
-    })
-    .then(r => r.json())
-    .then(data => {
-      fill.style.width = '100%';
-      setTimeout(() => { progress.style.display = 'none'; }, 500);
-      if (data.success) {
-        invoiceUrl = data.url;
-        document.getElementById('uploadPreview').classList.add('show');
-        document.getElementById('uploadFileName').textContent = file.name;
-        document.getElementById('err-invoice').style.display = 'none';
-      } else {
-        alert('上傳失敗，請重試');
-      }
-      uploadingFile = false;
-    })
-    .catch(() => {
-      // 若上傳失敗，仍可繼續（備援）
-      invoiceUrl = "(本地上傳失敗，憑證未上傳)";
-      uploadingFile = false;
-      progress.style.display = 'none';
-    });
-  };
-  reader.readAsDataURL(file);
-}
-
-// 拖放支援
-const zone = document.getElementById('uploadZone');
-['dragenter','dragover'].forEach(ev => zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.add('drag'); }));
-['dragleave','drop'].forEach(ev => zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.remove('drag'); }));
-zone.addEventListener('drop', e => {
-  const file = e.dataTransfer.files[0];
-  if (file) { document.getElementById('invoiceFile').files = e.dataTransfer.files; handleFile(document.getElementById('invoiceFile')); }
-});
-
-// ── 表單驗證 ──
-function validate() {
-  let ok = true;
-  const check = (id, errId, condition) => {
-    const el = document.getElementById(id);
-    const err = document.getElementById(errId);
-    if (!condition) { el.classList.add('error'); err.style.display = 'block'; ok = false; }
-    else { el.classList.remove('error'); err.style.display = 'none'; }
-  };
-
-  if (!selectedBrand) { document.getElementById('err-brand').style.display = 'block'; ok = false; }
-
-  check('f-name',    'err-name',    document.getElementById('f-name').value.trim());
-  check('f-phone',   'err-phone',   document.getElementById('f-phone').value.trim());
-  check('f-email',   'err-email',   /\S+@\S+\.\S+/.test(document.getElementById('f-email').value));
-  check('f-address', 'err-address', document.getElementById('f-address').value.trim());
-  check('f-product', 'err-product', document.getElementById('f-product').value.trim());
-  check('f-issue',   'err-issue',   document.getElementById('f-issue').value.trim());
-
-  if (!invoiceUrl) { document.getElementById('err-invoice').style.display = 'block'; ok = false; }
-  if (!document.getElementById('agreeCheck').checked) { alert('請勾選同意保修服務條款'); ok = false; }
-
+function validate(){
+  let ok=true;
+  const check=(id,errId,cond)=>{const el=document.getElementById(id),err=document.getElementById(errId);if(!cond){el.classList.add('error');err.style.display='block';ok=false;}else{el.classList.remove('error');err.style.display='none';}};
+  if(!selectedBrand){document.getElementById('err-brand').style.display='block';ok=false;}
+  check('f-name','err-name',document.getElementById('f-name').value.trim());
+  check('f-phone','err-phone',document.getElementById('f-phone').value.trim());
+  check('f-email','err-email',/\S+@\S+\.\S+/.test(document.getElementById('f-email').value));
+  check('f-address','err-address',document.getElementById('f-address').value.trim());
+  check('f-product','err-product',document.getElementById('f-product').value.trim());
+  check('f-issue','err-issue',document.getElementById('f-issue').value.trim());
+  if(!invoiceUrl){document.getElementById('err-invoice').style.display='block';ok=false;}
+  if(!document.getElementById('agreeCheck').checked){alert('請勾選同意保修服務條款');ok=false;}
   return ok;
 }
-
-// ── 提交表單 ──
-function submitForm() {
-  if (uploadingFile) { alert('憑證上傳中，請稍候...'); return; }
-  if (!validate()) return;
-
-  const payload = {
-    action: 'submit',
-    brand:        selectedBrand,
-    name:         document.getElementById('f-name').value.trim(),
-    phone:        document.getElementById('f-phone').value.trim(),
-    email:        document.getElementById('f-email').value.trim(),
-    address:      document.getElementById('f-address').value.trim(),
-    product:      document.getElementById('f-product').value.trim(),
-    serial:       document.getElementById('f-serial').value.trim(),
-    purchaseDate: document.getElementById('f-purchaseDate').value,
-    channel:      document.getElementById('f-channel').value.trim(),
-    issue:        document.getElementById('f-issue').value.trim(),
-    notes:        document.getElementById('f-notes').value.trim(),
-    invoiceUrl:   invoiceUrl,
-    // Razer 專屬
-    razerCaseNo:  document.getElementById('f-razerCaseNo').value.trim(),
-    channelType:  selectedChannel,
-    channelName:  document.getElementById('f-channelName').value.trim(),
-    tsCaseNo:     document.getElementById('f-tsCaseNo').value.trim(),
-  };
-
+function submitForm(){
+  if(uploadingFile){alert('憑證上傳中，請稍候...');return;}
+  if(!validate())return;
+  const payload={action:'submit',brand:selectedBrand,name:document.getElementById('f-name').value.trim(),phone:document.getElementById('f-phone').value.trim(),email:document.getElementById('f-email').value.trim(),address:document.getElementById('f-address').value.trim(),product:document.getElementById('f-product').value.trim(),serial:document.getElementById('f-serial').value.trim(),purchaseDate:document.getElementById('f-purchaseDate').value,channel:document.getElementById('f-channel').value.trim(),issue:document.getElementById('f-issue').value.trim(),notes:document.getElementById('f-notes').value.trim(),invoiceUrl,razerCaseNo:document.getElementById('f-razerCaseNo').value.trim(),channelType:selectedChannel,channelName:document.getElementById('f-channelName').value.trim(),tsCaseNo:document.getElementById('f-tsCaseNo').value.trim()};
   showLoading(true);
-  fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-    .then(r => r.json())
-    .then(data => {
-      showLoading(false);
-      if (data.success) {
-        document.getElementById('applyForm').style.display = 'none';
-        document.getElementById('successPanel').classList.add('show');
-        document.getElementById('successCaseId').textContent = data.caseId;
-      } else {
-        alert('提交失敗：' + (data.error || '請稍後再試'));
-      }
-    })
-    .catch(() => {
-      showLoading(false);
-      alert('網路錯誤，請稍後再試。');
-    });
+  fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)}).then(r=>r.json()).then(data=>{showLoading(false);if(data.success){document.getElementById('applyForm').style.display='none';document.getElementById('successPanel').classList.add('show');document.getElementById('successCaseId').textContent=data.caseId;}else alert('提交失敗：'+(data.error||'請稍後再試'));}).catch(()=>{showLoading(false);alert('網路錯誤，請稍後再試。');});
 }
-
-function resetApply() {
-  document.getElementById('applyForm').style.display = 'block';
-  document.getElementById('successPanel').classList.remove('show');
-  document.querySelectorAll('.brand-card').forEach(c => c.classList.remove('selected'));
-  selectedBrand = ''; invoiceUrl = ''; uploadingFile = false;
-  document.getElementById('agreeCheck').checked = false;
-  document.querySelectorAll('input:not([type=checkbox]):not([type=file]), textarea').forEach(el => el.value = '');
-  document.getElementById('uploadPreview').classList.remove('show');
-  document.getElementById('issueCount').textContent = '0';
-  document.getElementById('xbox-notice').style.display = 'none';
-  document.getElementById('razer-fields').style.display = 'none';
+function resetApply(){
+  document.getElementById('applyForm').style.display='block';document.getElementById('successPanel').classList.remove('show');
+  document.querySelectorAll('.brand-card').forEach(c=>c.classList.remove('selected'));
+  selectedBrand='';invoiceUrl='';uploadingFile=false;document.getElementById('agreeCheck').checked=false;
+  document.querySelectorAll('#applyForm input:not([type=checkbox]):not([type=file]),#applyForm textarea').forEach(el=>el.value='');
+  document.getElementById('uploadPreview').classList.remove('show');document.getElementById('issueCount').textContent='0';
+  document.getElementById('xbox-notice').style.display='none';document.getElementById('razer-fields').style.display='none';
 }
-
-function goTrack() {
-  const caseId = document.getElementById('successCaseId').textContent;
-  switchTab('track', document.querySelectorAll('.tab-btn')[1]);
-  document.getElementById('queryInput').value = caseId;
-  queryCase();
+function goTrack(){
+  const caseId=document.getElementById('successCaseId').textContent;
+  switchTab('track',document.querySelectorAll('.tab-btn')[1]);
+  document.getElementById('queryInput').value=caseId;queryCase();
 }
-
-// ── 查詢進度 ──
-const STEPS = ['完成填表','收貨歸檔','排測中','可換貨','原件退回'];
-const STEP_LABELS = { '完成填表':'填表完成','收貨歸檔':'收貨歸檔','排測中':'檢測中','可換貨':'可換貨','原件退回':'退回中','手動結案':'已結案','結案':'已結案' };
-
-function queryCase() {
-  const caseId = document.getElementById('queryInput').value.trim();
-  if (!caseId) return;
-
-  showLoading(true);
-  document.getElementById('resultCard').classList.remove('show');
-  document.getElementById('notFound').classList.remove('show');
-
-  fetch(`${APPS_SCRIPT_URL}?action=query&caseId=${encodeURIComponent(caseId)}`)
-    .then(r => r.json())
-    .then(data => {
-      showLoading(false);
-      if (data.found) {
-        renderResult(data);
-      } else {
-        document.getElementById('notFound').classList.add('show');
-      }
-    })
-    .catch(() => {
-      showLoading(false);
-      alert('查詢失敗，請稍後再試。');
-    });
+function queryCase(){
+  const caseId=document.getElementById('queryInput').value.trim();if(!caseId)return;
+  showLoading(true);document.getElementById('resultCard').classList.remove('show');document.getElementById('notFound').classList.remove('show');
+  fetch(`${APPS_SCRIPT_URL}?action=query&caseId=${encodeURIComponent(caseId)}`).then(r=>r.json()).then(data=>{showLoading(false);data.found?renderResult(data):document.getElementById('notFound').classList.add('show');}).catch(()=>{showLoading(false);alert('查詢失敗，請稍後再試。');});
 }
-
-function renderResult(d) {
-  document.getElementById('r-caseId').textContent = d.caseId;
-  document.getElementById('r-brand').textContent = d.brand;
-  document.getElementById('r-name').textContent = d.name || '—';
-  document.getElementById('r-product').textContent = d.product || '—';
-  document.getElementById('r-date').textContent = d.submitDate ? new Date(d.submitDate).toLocaleDateString('zh-TW') : '—';
-  document.getElementById('r-status').textContent = d.status || '—';
-
-  // Status badge
-  const badge = document.getElementById('r-statusBadge');
-  badge.textContent = d.status;
-  badge.className = 'status-badge status-' + (d.status || '');
-
-  // Progress steps
-  const stepsEl = document.getElementById('progressSteps');
-  const stepList = ['完成填表','收貨歸檔','排測中', d.status === '原件退回' ? '原件退回' : '可換貨', '已結案'];
-  const currentIdx = stepList.indexOf(d.status) >= 0 ? stepList.indexOf(d.status) :
-                     (d.status === '手動結案' || d.status === '結案') ? 4 : 0;
-
-  stepsEl.innerHTML = stepList.map((s, i) => {
-    const cls = i < currentIdx ? 'step done' : i === currentIdx ? 'step current' : 'step';
-    const icon = i < currentIdx ? '✓' : i + 1;
-    return `<div class="${cls}"><div class="step-dot">${icon}</div><div class="step-label">${s}</div></div>`;
-  }).join('');
-
-  // Warranty
-  const wBox = document.getElementById('r-warranty');
-  if (d.warranty) {
-    wBox.style.display = 'block';
-    const cls = d.warranty.includes('✅') ? 'warranty-ok' :
-                d.warranty.includes('❌') ? 'warranty-ng' : 'warranty-warn';
-    wBox.className = 'warranty-box ' + cls;
-    wBox.textContent = d.warranty + (d.warrantyNote ? '　' + d.warrantyNote : '');
-  } else {
-    wBox.style.display = 'none';
-  }
-
+function renderResult(d){
+  document.getElementById('r-caseId').textContent=d.caseId;document.getElementById('r-brand').textContent=d.brand;
+  document.getElementById('r-name').textContent=d.name||'—';document.getElementById('r-product').textContent=d.product||'—';
+  document.getElementById('r-date').textContent=d.submitDate?new Date(d.submitDate).toLocaleDateString('zh-TW'):'—';
+  document.getElementById('r-status').textContent=d.status||'—';
+  const badge=document.getElementById('r-statusBadge');badge.textContent=d.status;badge.className='status-badge status-'+(d.status||'');
+  const stepList=['完成填表','收貨歸檔','排測中',d.status==='原件退回'?'原件退回':'可換貨','已結案'];
+  const cur=stepList.indexOf(d.status)>=0?stepList.indexOf(d.status):(d.status==='手動結案'||d.status==='結案')?4:0;
+  document.getElementById('progressSteps').innerHTML=stepList.map((s,i)=>`<div class="${i<cur?'step done':i===cur?'step current':'step'}"><div class="step-dot">${i<cur?'✓':i+1}</div><div class="step-label">${s}</div></div>`).join('');
+  const wBox=document.getElementById('r-warranty');
+  if(d.warranty){wBox.style.display='block';wBox.className='warranty-box '+(d.warranty.includes('✅')?'warranty-ok':d.warranty.includes('❌')?'warranty-ng':'warranty-warn');wBox.textContent=d.warranty+(d.warrantyNote?'　'+d.warrantyNote:'');}
+  else wBox.style.display='none';
   document.getElementById('resultCard').classList.add('show');
 }
-
-// ── 客服 ──
-function setSubject(text, el) {
-  document.querySelectorAll('.quick-chip').forEach(c => c.style.borderColor = '');
-  el.style.borderColor = 'var(--accent)';
-  document.getElementById('c-subject').value = text;
+function setSubject(text,el){document.querySelectorAll('.quick-chip').forEach(c=>{c.style.borderColor='';c.style.background='';});el.style.borderColor='var(--accent)';el.style.background='var(--accent-light)';document.getElementById('c-subject').value=text;}
+function openMailto(){
+  const name=document.getElementById('c-name').value.trim(),email=document.getElementById('c-email').value.trim(),caseId=document.getElementById('c-caseId').value.trim(),subject=document.getElementById('c-subject').value.trim()||'保修詢問',body=document.getElementById('c-body').value.trim();
+  const full=`姓名：${name||'(未填)'}\nEmail：${email||'(未填)'}\n案件編號：${caseId||'(未填)'}\n\n${body}`;
+  window.location.href=`mailto:hi@acergaming.com?subject=${encodeURIComponent('[客服詢問] '+subject)}&body=${encodeURIComponent(full)}`;
 }
-
-function openMailto() {
-  const name    = document.getElementById('c-name').value.trim();
-  const email   = document.getElementById('c-email').value.trim();
-  const caseId  = document.getElementById('c-caseId').value.trim();
-  const subject = document.getElementById('c-subject').value.trim() || '保修詢問';
-  const body    = document.getElementById('c-body').value.trim();
-
-  const fullSubject = `[客服詢問] ${subject}`;
-  const fullBody = `姓名：${name || '(未填)'}
-Email：${email || '(未填)'}
-案件編號：${caseId || '(未填)'}
-
-${body}`;
-
-  window.location.href = `mailto:hi@acergaming.com?subject=${encodeURIComponent(fullSubject)}&body=${encodeURIComponent(fullBody)}`;
-}
-
-// ── FAQ ──
-const FAQS = [
-  { q: '保固期間是多久？', a: 'SteelSeries：2024/3/25 前購買2年，之後1年。Razer：一般1年，耳機2年。Logitech：一般2年。Acer/Predator/AGM：1年。Xbox 手把僅提供7日 DOA。' },
-  { q: '維修需要多久時間？', a: 'SteelSeries / 其他品牌：收到商品後 7-10 個工作天。Razer：14-28 個工作天。周休二日及國定假日不計入。' },
-  { q: '運費怎麼計算？', a: '採一人一趟：客戶負責將商品寄至本公司，本公司寄回時由本公司負擔。請勿使用貨到付款。' },
-  { q: '沒有購買憑證怎麼辦？', a: '無法提供憑證時，將以產品序號推算出廠日期作為保固起算日。序號標示於產品盒底或產品本身的貼紙上。' },
-  { q: '產品測試正常會怎麼處理？', a: '工程師測試後確認功能正常，將直接原件退回。僅針對報修品牌的產品進行測試，非該品牌的周邊設備所造成的問題不在保固範圍內。' },
-  { q: '換貨和原件退回有什麼差別？', a: '「可換貨」代表工程師確認產品有問題，將更換良品寄回。「原件退回」代表測試正常或非保固問題，原產品退回客戶。' },
+const FAQS=[
+  {q:'保固期間是多久？',a:'SteelSeries：2024/3/25 前購買2年，之後1年。Razer：一般1年，耳機2年。Logitech：一般2年。Acer / Predator / AGM：1年。Xbox 手把僅提供7日 DOA。'},
+  {q:'維修需要多久時間？',a:'SteelSeries / 其他品牌：收到商品後 7-10 個工作天。Razer：14-28 個工作天。周休二日及國定假日不計入。'},
+  {q:'運費怎麼計算？',a:'採一人一趟：客戶負責將商品寄至本公司，本公司處理完後寄回由本公司負擔。請勿使用貨到付款。'},
+  {q:'沒有購買憑證怎麼辦？',a:'無法提供憑證時，將以產品序號推算出廠日期作為保固起算日。序號標示於產品盒底或產品本身的貼紙上。'},
+  {q:'產品測試正常會怎麼處理？',a:'工程師測試後確認功能正常，將直接原件退回。僅針對報修品牌的產品進行測試，非該品牌的周邊設備所造成的問題不在保固範圍內。'},
+  {q:'換貨和原件退回有什麼差別？',a:'「可換貨」代表工程師確認產品有問題，將更換良品寄回。「原件退回」代表測試正常或非保固問題，原產品退回客戶。'},
 ];
-
-document.getElementById('faqList').innerHTML = FAQS.map((f, i) => `
-  <div class="faq-item" id="faq-${i}">
-    <div class="faq-q" onclick="toggleFaq(${i})">
-      <span>${f.q}</span>
-      <span class="faq-arrow">▼</span>
-    </div>
-    <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
-  </div>
-`).join('');
-
-function toggleFaq(i) {
-  const item = document.getElementById('faq-' + i);
-  item.classList.toggle('open');
-}
-
-// ── 工具 ──
-function showLoading(show) {
-  document.getElementById('loadingOverlay').classList.toggle('show', show);
-}
+document.getElementById('faqList').innerHTML=FAQS.map((f,i)=>`<div class="faq-item" id="faq-${i}"><div class="faq-q" onclick="toggleFaq(${i})"><span>${f.q}</span><span class="faq-arrow">▼</span></div><div class="faq-a"><div class="faq-a-inner">${f.a}</div></div></div>`).join('');
+function toggleFaq(i){document.getElementById('faq-'+i).classList.toggle('open');}
+function showLoading(show){document.getElementById('loadingOverlay').classList.toggle('show',show);}
 </script>
 </body>
 </html>
