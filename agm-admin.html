@@ -232,7 +232,7 @@ textarea:focus{border-color:var(--accent);}
 <div class="toast" id="toast"></div>
 
 <script>
-const API="https://script.google.com/macros/s/AKfycbzBhqyh8-PqkmWu6Pld8SxFVGbT9wyN2jhC2Xisqk0z2ZXWdf8l3S-cUesfiLSj7HbX/exec";
+const API="https://script.google.com/macros/s/AKfycbxhbwYU12GGrTkLOI7XNg53KrQC2FshLah67Sh_EPi6vnlzK057TYt791GnWt8AM2gu/exec";
 let cases=[],fBrand='ALL',fStatus='ALL',current=null;
 
 const DONE=['手動結案','結案','已結案'];
@@ -353,6 +353,8 @@ function openDrawer(caseId){
       <div class="ditem full"><div class="dlbl">產品</div><div class="dval">${c.product||'—'}</div></div>
       <div class="ditem"><div class="dlbl">AGM PN</div><div class="dval">${c.agmPn||'—'}</div></div>
       <div class="ditem"><div class="dlbl">報修品原價</div><div class="dval" style="font-weight:700;color:var(--accent);">${c.msrp?'$'+Number(c.msrp).toLocaleString():'—'}</div></div>
+      ${c.brand==='SteelSeries'&&c.mfgYear?`<div class="ditem"><div class="dlbl">出廠日期</div><div class="dval">${c.mfgYear}年${c.mfgMonth}月（第${c.mfgWeek}週）</div></div>`:''}
+      ${c.brand==='SteelSeries'&&c.mfgYear?'':`<div class="ditem"><div class="dlbl">出廠日期</div><div class="dval" style="color:var(--text3);">—</div></div>`}
       <div class="ditem"><div class="dlbl">進行天數</div><div class="dval" style="font-weight:700;color:${days>=14?'var(--warning)':'var(--text)'}">${days!==null?days+' 天':'—'}</div></div>
       <div class="ditem"><div class="dlbl">通知信</div><div class="dval">${c.notified?'✅ 已寄出':'— 未寄'}</div></div>
       <div class="ditem"><div class="dlbl">目前狀態</div><div class="dval"><span class="badge b-${isDone?'已結案':c.status}">${isDone?'已結案':c.status}</span></div></div>
