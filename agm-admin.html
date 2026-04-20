@@ -288,15 +288,8 @@ const BRAND_COLORS = {
 
 function brandBadge(brand){
   const b = brandShort(brand);
-  const logo = BRAND_LOGOS[b];
   const color = BRAND_COLORS[b] || '#9aa0a6';
-  if (logo) {
-    return `<span style="display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:${color}18;color:${color};border:1px solid ${color}44;">
-      <img src="${logo}" style="width:14px;height:14px;object-fit:contain;border-radius:2px;" onerror="this.style.display='none'">
-      ${b}
-    </span>`;
-  }
-  return `<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:${color}18;color:${color};border:1px solid ${color}44;">${b}</span>`;
+  return `<span style="display:inline-block;padding:3px 10px;border-radius:10px;font-size:13px;font-weight:700;background:${color}18;color:${color};border:1px solid ${color}44;">${b}</span>`;
 }
 
 // 品牌篩選邏輯：Other 子品牌要從 brand 欄位直接比對
