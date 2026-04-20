@@ -104,8 +104,8 @@ textarea { resize:vertical; min-height:100px; }
 }
 .brand-card:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-light); }
 .brand-card.selected { border-color:var(--accent); background:var(--accent-light); color:var(--accent); }
-.brand-card .brand-icon { font-size:26px; display:block; margin-bottom:6px; }
-.brand-card .brand-icon img { width:32px; height:32px; object-fit:contain; display:block; margin:0 auto 6px; }
+.brand-card .brand-icon { font-size:48px; display:block; margin-bottom:8px; }
+.brand-card .brand-icon img { width:64px; height:64px; object-fit:contain; display:block; margin:0 auto 4px; }
 
 .radio-group { display:flex; gap:10px; flex-wrap:wrap; }
 .radio-card {
@@ -356,8 +356,8 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
 
       <div class="section-sub">產品資訊</div>
       <div class="form-row">
-        <div class="form-group"><label>產品型號 <span class="req">*</span></label><input type="text" id="f-product" placeholder="例：Arctis Nova Pro" oninput="checkWarrantyFront()"><div class="field-error" id="err-product">請填寫產品型號</div></div>
-        <div class="form-group"><label>序號 / S/N</label><input type="text" id="f-serial" placeholder="SteelSeries 請填19碼序號"></div>
+        <div class="form-group"><label>產品型號 <span class="req">*</span></label><input type="text" id="f-product" placeholder="例：Arctis Nova Pro / BlackShark V2 / G923" oninput="checkWarrantyFront()"><div class="field-error" id="err-product">請填寫產品型號</div></div>
+        <div class="form-group"><label>序號 / S/N</label><input type="text" id="f-serial" placeholder="產品序號，標示於產品底部或外盒貼紙上"></div>
       </div>
 
       <div id="razer-fields" style="display:none;">
