@@ -153,6 +153,7 @@ textarea:focus{border-color:var(--accent);}
 <header>
   <div class="logo">AGM <span>保修後台</span></div>
   <div class="hdr-right">
+    <button class="hdr-btn" id="demoBtn" onclick="toggleDemo()" style="color:var(--text3);">🧪 示範模式</button>
     <button class="hdr-btn" onclick="loadCases()">↻ 重新整理</button>
     <a href="index.html" class="hdr-btn">← 客戶頁面</a>
   </div>
@@ -234,6 +235,30 @@ textarea:focus{border-color:var(--accent);}
 <script>
 const API="https://script.google.com/macros/s/AKfycbzBhqyh8-PqkmWu6Pld8SxFVGbT9wyN2jhC2Xisqk0z2ZXWdf8l3S-cUesfiLSj7HbX/exec";
 let cases=[],fBrand='ALL',fStatus='ALL',current=null;
+let demoMode=false;
+
+function toggleDemo(){
+  demoMode=!demoMode;
+  const btn=document.getElementById('demoBtn');
+  if(demoMode){
+    btn.style.color='var(--warning)';
+    btn.style.borderColor='var(--warning)';
+    btn.textContent='🧪 示範中（點擊關閉）';
+    document.title='AGM 保修後台 [示範模式]';
+    loadDemoData();
+  } else {
+    btn.style.color='var(--text3)';
+    btn.style.borderColor='';
+    btn.textContent='🧪 示範模式';
+    loadCases();
+  }
+}
+
+function loadDemoData(){
+  cases=DEMO_CASES;
+  calcStats();renderTable();
+}
+
 const DONE=['手動結案','結案','已結案'];
 
 async function loadCases(){
