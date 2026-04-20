@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AGM 宏碁遊戲 保修服務</title>
+<title>AGM 宏碁遊戲 保固服務</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Inter:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -308,21 +308,21 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
 </div>
 
 <header>
-  <div class="logo">Acer <span>Gaming</span> 保修服務</div>
+  <div class="logo">Acer <span>Gaming</span> 保固服務</div>
   <a href="agm-admin.html" class="admin-link">🔧 工程師後台</a>
 </header>
 
 <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('apply',this)">📋 申請保修</button>
+  <button class="tab-btn active" onclick="switchTab('apply',this)">📋 申請保固</button>
   <button class="tab-btn" onclick="switchTab('track',this)">🔍 查詢進度</button>
   <button class="tab-btn" onclick="switchTab('contact',this)">✉️ 聯絡客服</button>
 </div>
 
 <main>
-<!-- 申請保修 -->
+<!-- 申請保固 -->
 <div id="panel-apply" class="tab-panel active">
   <div id="applyForm">
-    <div class="section-title">申請保修</div>
+    <div class="section-title">申請保固</div>
     <div class="section-desc">請填寫以下資訊，送出後將收到確認信，再依指示寄送商品。</div>
     <div class="info-banner">
       📦 收件地址：<strong>新北市汐止區新台五路一段84號15樓(AGM) 宏碁遊戲客服中心 收</strong><br>
@@ -343,7 +343,7 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
       </div>
       <div id="xbox-notice" style="display:none;" class="info-banner">
         ⚠️ <strong>XBOX 手把</strong>僅提供購買 <strong>7 日內</strong>新品不良（DOA）服務，需保留完整包裝。超過 7 日請至
-        <a href="https://support.xbox.com/zh-TW/forms/request-controller-replacement" target="_blank" style="color:var(--accent);font-weight:600;">Xbox 官方報修</a>。
+        <a href="https://support.xbox.com/zh-TW/forms/request-controller-replacement" target="_blank" style="color:var(--accent);font-weight:600;">Xbox 官方保固服務</a>。
       </div>
 
       <div class="section-sub">客戶資訊</div>
@@ -366,8 +366,8 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
           <div class="form-group">
             <label>購買通路類型</label>
             <div class="radio-group" id="rz-channel-group">
-              <div class="radio-card selected" onclick="selectRadio('rz-channel','個人報修',this)">個人報修</div>
-              <div class="radio-card" onclick="selectRadio('rz-channel','通路報修',this)">通路報修</div>
+              <div class="radio-card selected" onclick="selectRadio('rz-channel','個人申請',this)">個人申請</div>
+              <div class="radio-card" onclick="selectRadio('rz-channel','通路申請',this)">通路申請</div>
               <div class="radio-card" onclick="selectRadio('rz-channel','燦坤通路',this)">燦坤通路</div>
             </div>
           </div>
@@ -410,10 +410,10 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
       <div class="form-group">
         <label class="agree-row" for="agreeCheck">
           <input type="checkbox" id="agreeCheck">
-          <span class="agree-text">我已閱讀並同意保修服務條款。我了解保固期間以購買憑證為主；人為損壞、進水、自行拆解不在保固範圍；測試正常將原件退回。</span>
+          <span class="agree-text">我已閱讀並同意保固服務條款。我了解保固期間以購買憑證為主；人為損壞、進水、自行拆解不在保固範圍；測試正常將原件退回。</span>
         </label>
       </div>
-      <button class="submit-btn" onclick="submitForm()">提交保修申請 →</button>
+      <button class="submit-btn" onclick="submitForm()">提交保固申請 →</button>
     </div>
   </div>
 
@@ -425,14 +425,14 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
     <div class="address-box"><h4>📦 請將商品寄至</h4><p>新北市汐止區新台五路一段84號15樓(AGM)<br>宏碁遊戲客服中心 收</p></div>
     <div class="success-actions">
       <button class="btn-outline" onclick="resetApply()">再次申請</button>
-      <button class="btn-primary" onclick="goTrack()">查詢維修進度</button>
+      <button class="btn-primary" onclick="goTrack()">查詢保固進度</button>
     </div>
   </div>
 </div>
 
 <!-- 查詢進度 -->
 <div id="panel-track" class="tab-panel">
-  <div class="section-title">查詢維修進度</div>
+  <div class="section-title">查詢保固進度</div>
   <div class="section-desc">輸入您的案件編號，即可查看目前處理狀態。</div>
   <div class="query-box">
     <label style="margin-bottom:10px;display:block;font-size:16px;">案件編號</label>
@@ -497,8 +497,8 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
 </main>
 
 <script>
-const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxndrXlqb1eoiF_hO7CzQI2_PwFXj8OJ2d6M9T6g3kJlBQa8-yTiOMUiKyFsCCPHQsV/exec";
-let selectedBrand="",selectedChannel="個人報修",invoiceUrl="",uploadingFile=false;
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbyQgljTqUS5DCGcyJXc3I6ZRs-ST9HZhrsdXrqaMnPMdSOVHkmvucr_oQzUhKyiODoi/exec";
+let selectedBrand="",selectedChannel="個人申請",invoiceUrl="",uploadingFile=false;
 
 // ── 保固規則（前台判斷）──────────────────────────────
 const WARRANTY_RULES = {
@@ -546,7 +546,7 @@ const WARRANTY_RULES = {
     const pd = new Date(purchaseDate); const expiry = new Date(pd);
     expiry.setDate(expiry.getDate() + 7);
     const ok = new Date() <= expiry;
-    return { ok, expiry, msg: ok ? '' : `已超過7日 DOA 期限（到期：${fmt(expiry)}）。請至 Xbox 官方報修。` };
+    return { ok, expiry, msg: ok ? '' : `已超過7日 DOA 期限（到期：${fmt(expiry)}）。請至 Xbox 官方保固服務。` };
   }
 };
 
@@ -584,7 +584,7 @@ function checkWarrantyFront() {
   if (NON_WARRANTY_KEYWORDS.some(k => product.includes(k.toLowerCase()))) {
     box.style.display = 'block';
     box.className = 'warranty-check-box wcb-block';
-    box.innerHTML = '🚫 <strong>此產品不在保固範圍內</strong>（消耗品或已停產產品無法申請保修）';
+    box.innerHTML = '🚫 <strong>此產品不在保固範圍內</strong>（消耗品或已停產產品無法申請保固）';
     return false;
   }
 
@@ -637,7 +637,7 @@ function selectRadio(group,value,el){
   el.classList.add('selected');
   if(group==='rz-channel'){
     selectedChannel=value;
-    document.getElementById('rz-channelName-wrap').style.display=value==='通路報修'?'block':'none';
+    document.getElementById('rz-channelName-wrap').style.display=value==='通路申請'?'block':'none';
     document.getElementById('rz-tsCaseNo-wrap').style.display=value==='燦坤通路'?'block':'none';
   }
 }
@@ -674,7 +674,7 @@ function validate(){
   check('f-product','err-product',document.getElementById('f-product').value.trim());
   check('f-issue','err-issue',document.getElementById('f-issue').value.trim());
   if(!invoiceUrl){document.getElementById('err-invoice').style.display='block';ok=false;}
-  if(!document.getElementById('agreeCheck').checked){alert('請勾選同意保修服務條款');ok=false;}
+  if(!document.getElementById('agreeCheck').checked){alert('請勾選同意保固服務條款');ok=false;}
   // 保固檢查（有填購買日期才強制檢查）
   if(ok && document.getElementById('f-purchaseDate').value) {
     if(!checkWarrantyFront()) { ok=false; document.getElementById('warranty-check-box').scrollIntoView({behavior:'smooth',block:'center'}); }
@@ -728,10 +728,10 @@ function openMailto(){
 }
 const FAQS=[
   {q:'保固期間是多久？',a:'SteelSeries：2024/3/25 前購買2年，之後1年。Razer：一般1年，耳機2年。Logitech：一般2年。Acer / Predator / AGM：1年。Xbox 手把僅提供7日 DOA。'},
-  {q:'維修需要多久時間？',a:'SteelSeries / 其他品牌：收到商品後 7-10 個工作天。Razer：14-28 個工作天。周休二日及國定假日不計入。'},
+  {q:'處理需要多久時間？',a:'SteelSeries / 其他品牌：收到商品後 7-10 個工作天。Razer：14-28 個工作天。周休二日及國定假日不計入。'},
   {q:'運費怎麼計算？',a:'採一人一趟：客戶負責將商品寄至本公司，本公司處理完後寄回由本公司負擔。請勿使用貨到付款。'},
   {q:'沒有購買憑證怎麼辦？',a:'無法提供憑證時，將以產品序號推算出廠日期作為保固起算日。序號標示於產品盒底或產品本身的貼紙上。'},
-  {q:'產品測試正常會怎麼處理？',a:'工程師測試後確認功能正常，將直接原件退回。僅針對報修品牌的產品進行測試，非該品牌的周邊設備所造成的問題不在保固範圍內。'},
+  {q:'產品測試正常會怎麼處理？',a:'工程師測試後確認功能正常，將直接原件退回。僅針對送修品牌的產品進行測試，非該品牌的周邊設備所造成的問題不在保固範圍內。'},
   {q:'換貨和原件退回有什麼差別？',a:'「可換貨」代表工程師確認產品有問題，將更換良品寄回。「原件退回」代表測試正常或非保固問題，原產品退回客戶。'},
 ];
 document.getElementById('faqList').innerHTML=FAQS.map((f,i)=>`<div class="faq-item" id="faq-${i}"><div class="faq-q" onclick="toggleFaq(${i})"><span>${f.q}</span><span class="faq-arrow">▼</span></div><div class="faq-a"><div class="faq-a-inner">${f.a}</div></div></div>`).join('');
