@@ -105,6 +105,7 @@ textarea { resize:vertical; min-height:100px; }
 .brand-card:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-light); }
 .brand-card.selected { border-color:var(--accent); background:var(--accent-light); color:var(--accent); }
 .brand-card .brand-icon { font-size:26px; display:block; margin-bottom:6px; }
+.brand-card .brand-icon img { width:32px; height:32px; object-fit:contain; display:block; margin:0 auto 6px; }
 
 .radio-group { display:flex; gap:10px; flex-wrap:wrap; }
 .radio-card {
@@ -331,12 +332,12 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
       <div class="form-group">
         <label>選擇品牌 <span class="req">*</span></label>
         <div class="brand-grid">
-          <div class="brand-card" onclick="selectBrand('SteelSeries',this)"><span class="brand-icon">🎧</span>SteelSeries</div>
-          <div class="brand-card" onclick="selectBrand('Razer',this)"><span class="brand-icon">🐍</span>Razer 雷蛇</div>
-          <div class="brand-card" onclick="selectBrand('Logitech',this)"><span class="brand-icon">🖱️</span>Logitech 羅技</div>
-          <div class="brand-card" onclick="selectBrand('Acer',this)"><span class="brand-icon">💻</span>Acer / Predator</div>
-          <div class="brand-card" onclick="selectBrand('AGM',this)"><span class="brand-icon">🏷️</span>AGM 自有品牌</div>
-          <div class="brand-card" onclick="selectBrand('Xbox',this)"><span class="brand-icon">🎮</span>XBOX 手把</div>
+          <div class="brand-card" onclick="selectBrand('SteelSeries',this)"><span class="brand-icon"><img src="https://img.icons8.com/color/512/steelseries.png" onerror="this.outerHTML='🎧'"></span>SteelSeries</div>
+          <div class="brand-card" onclick="selectBrand('Razer',this)"><span class="brand-icon"><img src="https://cdn.worldvectorlogo.com/logos/razer.svg" onerror="this.outerHTML='🐍'"></span>Razer 雷蛇</div>
+          <div class="brand-card" onclick="selectBrand('Logitech',this)"><span class="brand-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmsvd2MKNtzGUiJvOfLkiHnLfxd3X_hwTMeA&s" onerror="this.outerHTML='🖱️'"></span>Logitech 羅技</div>
+          <div class="brand-card" onclick="selectBrand('Acer',this)"><span class="brand-icon"><img src="https://images.seeklogo.com/logo-png/44/1/acer-predator-logo-png_seeklogo-441422.png" onerror="this.outerHTML='💻'"></span>Acer / Predator</div>
+          <div class="brand-card" onclick="selectBrand('AGM',this)"><span class="brand-icon"><img src="https://logo.clearbit.com/acergaming.com" onerror="this.outerHTML='🏷️'"></span>AGM 自有品牌</div>
+          <div class="brand-card" onclick="selectBrand('Xbox',this)"><span class="brand-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Xbox_one_logo.svg/1280px-Xbox_one_logo.svg.png" onerror="this.outerHTML='🎮'"></span>XBOX 手把</div>
         </div>
         <div class="field-error" id="err-brand">請選擇品牌</div>
       </div>
@@ -496,7 +497,7 @@ input.error,select.error,textarea.error { border-color:var(--danger); box-shadow
 </main>
 
 <script>
-const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxhbwYU12GGrTkLOI7XNg53KrQC2FshLah67Sh_EPi6vnlzK057TYt791GnWt8AM2gu/exec";
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbwRGHnYmNBJo3k0z1PrwRqJvXtdoXuIpv9bOw-_94dUjOICQKwNMIGISqg0BfKbEZpu/exec";
 let selectedBrand="",selectedChannel="個人報修",invoiceUrl="",uploadingFile=false;
 
 // ── 保固規則（前台判斷）──────────────────────────────
