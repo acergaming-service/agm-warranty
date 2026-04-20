@@ -240,7 +240,9 @@ async function loadCases(){
   document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="9"><span class="spin"></span> 載入中...</td></tr>';
   try{
     const d=await(await fetch(`${API}?action=listAll`)).json();
-    if(d.success){cases=d.cases;calcStats();renderTable();}
+    if(d.success){cases=d.cases;calcStats();renderTable();
+      document.title='AGM 保修後台 ['+(d.version||'舊版')+']';
+    }
   }catch{document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="9" style="color:var(--danger)">載入失敗，請重新整理</td></tr>';}
 }
 
@@ -345,11 +347,7 @@ function openDrawer(caseId){
       <div class="ditem full"><div class="dlbl">Email</div><div class="dval">${c.email||'—'}</div></div>
       <div class="ditem full"><div class="dlbl">產品</div><div class="dval">${c.product||'—'}</div></div>
       <div class="ditem"><div class="dlbl">AGM PN</div><div class="dval">${c.agmPn||'—'}</div></div>
-      <div class="ditem">
-        <div class="dlbl">報修品原價（可修改）</div>
-        <input type="text" id="msrp-input" value="${c.msrp||''}" placeholder="輸入金額，例：6690"
-          style="font-weight:700;color:var(--accent);border-color:${c.msrp?'var(--border2)':'var(--warning)'};background:${c.msrp?'var(--white)':'var(--warning-bg)'};">
-      </div>
+      <div class="ditem"><div class="dlbl">報修品原價</div><div class="dval" style="font-weight:700;color:var(--accent);">${c.msrp?'$'+Number(c.msrp).toLocaleString():'—'}</div></div>
       <div class="ditem"><div class="dlbl">進行天數</div><div class="dval" style="font-weight:700;color:${days>=14?'var(--warning)':'var(--text)'}">${days!==null?days+' 天':'—'}</div></div>
       <div class="ditem"><div class="dlbl">通知信</div><div class="dval">${c.notified?'✅ 已寄出':'— 未寄'}</div></div>
       <div class="ditem"><div class="dlbl">目前狀態</div><div class="dval"><span class="badge b-${isDone?'已結案':c.status}">${isDone?'已結案':c.status}</span></div></div>
@@ -401,7 +399,6 @@ function confirmUpdate(){
   const note=document.getElementById('cn').value.trim();
   const oiNo=(document.getElementById('oi-no')?.value||'').trim();
   const ooNo=(document.getElementById('oo-no')?.value||'').trim();
-  const msrpOverride=(document.getElementById('msrp-input')?.value||'').trim();
   const c=current;
   if(c.warranty&&(c.warranty.includes('🚫')||c.warranty.includes('🔀'))){showModal('⛔ 無法更新',`此案件為<strong>${c.warranty}</strong>，不允許更新。`,[{l:'關閉',cls:'abtn-n',fn:closeModal}]);return;}
   if(['可換貨','原件退回'].includes(status)&&!tn){showModal('⚠️ 請填入物流單號','填入物流單號後系統才會自動寄通知信並結案。',[{l:'我知道了',cls:'abtn-n',fn:closeModal}]);return;}
@@ -412,14 +409,14 @@ function confirmUpdate(){
   if(note)body+=`<br>備註：${note}`;
   if(['可換貨','原件退回'].includes(status))body+=`<br><br>📮 系統將自動寄通知信並結案`;
   const acts=c.warranty&&c.warranty.includes('❌')
-    ?[{l:'取消',cls:'abtn-n',fn:closeModal},{l:'確定（過保固）',cls:'abtn-d',fn:()=>{closeModal();doUpdate(status,tn,note,oiNo,ooNo,msrpOverride);}}]
-    :[{l:'取消',cls:'abtn-n',fn:closeModal},{l:'確定',cls:'abtn-p',fn:()=>{closeModal();doUpdate(status,tn,note,oiNo,ooNo,msrpOverride);}}];
+    ?[{l:'取消',cls:'abtn-n',fn:closeModal},{l:'確定（過保固）',cls:'abtn-d',fn:()=>{closeModal();doUpdate(status,tn,note,oiNo,ooNo);}}]
+    :[{l:'取消',cls:'abtn-n',fn:closeModal},{l:'確定',cls:'abtn-p',fn:()=>{closeModal();doUpdate(status,tn,note,oiNo,ooNo);}}];
   showModal(c.warranty&&c.warranty.includes('❌')?'⚠️ 過保固警告':'確認更新',body,acts);
 }
 
-async function doUpdate(status,tn,note,oiNo,ooNo,msrpOverride){
+async function doUpdate(status,tn,note,oiNo,ooNo){
   try{
-    const d=await(await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatus',caseId:current.caseId,brand:current.brand,status,trackingNo:tn,notes:note,oiNo,ooNo,msrpOverride})})).json();
+    const d=await(await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatus',caseId:current.caseId,brand:current.brand,status,trackingNo:tn,notes:note,oiNo,ooNo})})).json();
     if(d.success){
       const idx=cases.findIndex(c=>c.caseId===current.caseId);
       if(idx>=0){
@@ -428,7 +425,6 @@ async function doUpdate(status,tn,note,oiNo,ooNo,msrpOverride){
         if(d.closedDays)cases[idx].closedDays=d.closedDays;
         if(oiNo)cases[idx].oiNo=oiNo;
         if(ooNo)cases[idx].ooNo=ooNo;
-        if(msrpOverride)cases[idx].msrp=msrpOverride;
       }
       showToast('✓ 已更新','s');calcStats();renderTable();
       current=cases.find(c=>c.caseId===current.caseId);
