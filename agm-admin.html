@@ -51,6 +51,12 @@ header{background:var(--white);border-bottom:1px solid var(--border);padding:0 2
 .tbl-wrap{overflow-x:auto;padding:16px 24px 80px;}
 table{width:100%;border-collapse:collapse;background:var(--white);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);}
 thead tr{background:var(--surface2);border-bottom:2px solid var(--border);}
+th.sortable{cursor:pointer;user-select:none;}
+th.sortable:hover{background:var(--border);}
+th.sortable .arr{margin-left:4px;opacity:.4;font-size:10px;}
+th.sortable.asc .arr::after{content:'▲';}
+th.sortable.desc .arr::after{content:'▼';}
+th.sortable:not(.asc):not(.desc) .arr::after{content:'⇅';}
 th{padding:11px 14px;text-align:left;font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;}
 tbody tr{border-bottom:1px solid var(--border);transition:background .15s;cursor:pointer;}
 tbody tr:last-child{border-bottom:none;}
@@ -65,7 +71,7 @@ td{padding:12px 14px;font-size:14px;vertical-align:middle;}
 .d-warn{color:var(--warning);}.d-ok{color:var(--success);}
 .td-notify{text-align:center;font-size:15px;}
 
-.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;white-space:nowrap;}
+.badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:12px;font-size:13px;font-weight:700;white-space:nowrap;}
 .b-完成填表{background:var(--gray-bg);color:var(--gray);}
 .b-收貨歸檔,.b-收件歸檔{background:var(--accent-light);color:var(--accent);}
 .b-排測中{background:var(--warning-bg);color:var(--warning);}
@@ -153,6 +159,12 @@ textarea:focus{border-color:var(--accent);}
 <header>
   <div class="logo">AGM <span>保修後台</span></div>
   <div class="hdr-right">
+    <div style="display:flex;align-items:center;gap:6px;border:1.5px solid var(--border2);border-radius:7px;padding:4px 10px;background:var(--white);">
+      <span style="font-size:12px;color:var(--text3);white-space:nowrap;">📅 顯示</span>
+      <select id="monthSel" onchange="loadCases()" style="border:none;outline:none;font-size:13px;font-weight:600;color:var(--text);background:transparent;cursor:pointer;font-family:'Noto Sans TC',sans-serif;">
+        <option value="">載入中...</option>
+      </select>
+    </div>
     <button class="hdr-btn" onclick="loadCases()">↻ 重新整理</button>
     <a href="index.html" class="hdr-btn">← 客戶頁面</a>
   </div>
@@ -160,7 +172,8 @@ textarea:focus{border-color:var(--accent);}
 
 <!-- Stats -->
 <div class="stats-bar">
-  <div class="stat-pill active" onclick="setStatus('ALL',this)"><span class="stat-num sn-all" id="s0">0</span>全部</div>
+  <div class="stat-pill" onclick="setStatus('ALL',this)"><span class="stat-num sn-all" id="s0">0</span>全部</div>
+  <div class="stat-pill active" onclick="setStatus('ACTIVE',this)"><span class="stat-num sn-pending" id="s8">0</span>進行中</div>
   <div class="stat-pill" onclick="setStatus('完成填表',this)"><span class="stat-num sn-pending" id="s1">0</span>待收件</div>
   <div class="stat-pill" onclick="setStatus('收貨歸檔',this)"><span class="stat-num sn-testing" id="s2">0</span>收貨歸檔</div>
   <div class="stat-pill" onclick="setStatus('排測中',this)"><span class="stat-num sn-testing" id="s3">0</span>排測中</div>
@@ -190,16 +203,15 @@ textarea:focus{border-color:var(--accent);}
   <table>
     <thead>
       <tr>
-        <th>案件編號</th>
-        <th>品牌</th>
-        <th>姓名</th>
+        <th class="sortable" onclick="sortBy('caseId',this)">案件編號<span class="arr"></span></th>
+        <th class="sortable" onclick="sortBy('brand',this)">品牌<span class="arr"></span></th>
+        <th class="sortable" onclick="sortBy('name',this)">姓名<span class="arr"></span></th>
         <th>產品</th>
-        <th>申請日期</th>
-        <th>狀態</th>
-        <th style="text-align:center;">保固</th>
+        <th class="sortable desc" onclick="sortBy('submitDate',this)">申請日期<span class="arr"></span></th>
+        <th class="sortable" onclick="sortBy('status',this)">狀態<span class="arr"></span></th>
         <th style="text-align:center;">通知信</th>
-        <th style="text-align:right;">原價</th>
-        <th style="text-align:center;">工作天數</th>
+        <th class="sortable" style="text-align:right;" onclick="sortBy('msrp',this)">原價<span class="arr"></span></th>
+        <th class="sortable" style="text-align:center;" onclick="sortBy('days',this)">工作天數<span class="arr"></span></th>
       </tr>
     </thead>
     <tbody id="tbody">
@@ -232,20 +244,67 @@ textarea:focus{border-color:var(--accent);}
 <div class="toast" id="toast"></div>
 
 <script>
-const API="https://script.google.com/macros/s/AKfycbwRGHnYmNBJo3k0z1PrwRqJvXtdoXuIpv9bOw-_94dUjOICQKwNMIGISqg0BfKbEZpu/exec";
-let cases=[],fBrand='ALL',fStatus='ALL',current=null;
+const API="https://script.google.com/macros/s/AKfycbzYtAeHL2kgslKUzma9VCMZj9dmHke-OC4FqX-T5_Rfe2GGX03v2lJdXrSqq-GQ7e4/exec";
+let cases=[],fBrand='ALL',fStatus='ACTIVE',current=null;
 
 const DONE=['手動結案','結案','已結案'];
 
-async function loadCases(){
-  document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="10"><span class="spin"></span> 載入中...</td></tr>';
+// 初始化：載入月份清單，預設選當月
+async function initMonthSelector(){
+  const sel=document.getElementById('monthSel');
   try{
-    const d=await(await fetch(`${API}?action=listAll`)).json();
-    if(d.success){cases=d.cases;calcStats();renderTable();
+    const d=await(await fetch(`${API}?action=listMonths`)).json();
+    if(d.success&&d.months.length){
+      const now=new Date();
+      const thisMon=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+
+      // 依年份分組
+      const byYear={};
+      d.months.forEach(m=>{
+        const [y]=m.split('-');
+        if(!byYear[y])byYear[y]=[];
+        byYear[y].push(m);
+      });
+
+      // 建立有 optgroup 的選單
+      let html='';
+      Object.keys(byYear).sort().reverse().forEach(y=>{
+        html+=`<optgroup label="${y} 年">`;
+        byYear[y].forEach(m=>{
+          const mo=parseInt(m.split('-')[1]);
+          html+=`<option value="${m}"${m===thisMon?' selected':''}>${y}年${mo}月</option>`;
+        });
+        html+=`</optgroup>`;
+      });
+      html+='<option value="ALL">── 全部資料 ──</option>';
+      sel.innerHTML=html;
+    } else {
+      sel.innerHTML='<option value="ALL">全部資料</option>';
+    }
+  }catch{
+    sel.innerHTML='<option value="ALL">全部資料</option>';
+  }
+  loadCases();
+}
+
+async function loadCases(){
+  document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="9"><span class="spin"></span> 載入中...</td></tr>';
+  const sel=document.getElementById('monthSel');
+  const val=sel?sel.value:'ALL';
+  let url=`${API}?action=listAll`;
+  if(val&&val!=='ALL'){
+    const [y,m]=val.split('-');
+    url+=`&year=${y}&month=${parseInt(m)}`;
+  }
+  try{
+    const d=await(await fetch(url)).json();
+    if(d.success){
+      cases=d.cases;
+      calcStats();renderTable();
       document.title='AGM 保修後台 ['+(d.version||'舊版')+']';
     }
   }catch{
-    document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="10" style="color:var(--danger)">載入失敗，請重新整理</td></tr>';
+    document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="9" style="color:var(--danger)">載入失敗，請重新整理</td></tr>';
   }
 }
 
@@ -253,6 +312,7 @@ async function loadCases(){
 
 function calcStats(){
   document.getElementById('s0').textContent=cases.length;
+  document.getElementById('s8').textContent=cases.filter(c=>!DONE.includes(c.status)).length;
   document.getElementById('s1').textContent=cases.filter(c=>c.status==='完成填表').length;
   document.getElementById('s2').textContent=cases.filter(c=>c.status==='收貨歸檔'||c.status==='收件歸檔').length;
   document.getElementById('s3').textContent=cases.filter(c=>c.status==='排測中').length;
@@ -260,6 +320,39 @@ function calcStats(){
   document.getElementById('s5').textContent=cases.filter(c=>c.status==='原件退回').length;
   document.getElementById('s6').textContent=cases.filter(c=>DONE.includes(c.status)).length;
   document.getElementById('s7').textContent=cases.filter(c=>c.warranty&&(c.warranty.includes('❌')||c.warranty.includes('🚫')||c.warranty.includes('🔀'))).length;
+}
+
+let sortCol='submitDate', sortDir='desc';
+
+function sortBy(col, el){
+  if(sortCol===col){ sortDir=sortDir==='asc'?'desc':'asc'; }
+  else { sortCol=col; sortDir=col==='submitDate'?'desc':'asc'; }
+  // Update header arrows
+  document.querySelectorAll('th.sortable').forEach(th=>{th.classList.remove('asc','desc');});
+  el.classList.add(sortDir);
+  renderTable();
+}
+
+function sortCases(list){
+  return list.sort((a,b)=>{
+    let va, vb;
+    const today=new Date(); today.setHours(0,0,0,0);
+    if(sortCol==='days'){
+      va=a.submitDate?Math.ceil((today-new Date(a.submitDate))/86400000):0;
+      vb=b.submitDate?Math.ceil((today-new Date(b.submitDate))/86400000):0;
+    } else if(sortCol==='submitDate'){
+      va=new Date(a.submitDate||0).getTime();
+      vb=new Date(b.submitDate||0).getTime();
+    } else if(sortCol==='msrp'){
+      va=Number(a.msrp)||0; vb=Number(b.msrp)||0;
+    } else {
+      va=String(a[sortCol]||'').toLowerCase();
+      vb=String(b[sortCol]||'').toLowerCase();
+    }
+    if(va<vb)return sortDir==='asc'?-1:1;
+    if(va>vb)return sortDir==='asc'?1:-1;
+    return 0;
+  });
 }
 
 function setBrand(v,el){fBrand=v;el.closest('.filter-grp').querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderTable();}
@@ -307,11 +400,12 @@ function renderTable(){
     if(!matchBrand(c))return false;
     if(fStatus==='WARRANTY')return c.warranty&&(c.warranty.includes('❌')||c.warranty.includes('🚫')||c.warranty.includes('🔀'));
     if(fStatus==='已結案')return DONE.includes(c.status);
+    if(fStatus==='ACTIVE')return !DONE.includes(c.status);
     if(fStatus!=='ALL'&&c.status!==fStatus)return false;
     if(q&&![(c.caseId||''),(c.name||''),(c.product||''),(c.email||''),(c.subBrand||c.brand||'')].join(' ').toLowerCase().includes(q))return false;
     return true;
   });
-  list.sort((a,b)=>{const ad=DONE.includes(a.status),bd=DONE.includes(b.status);if(ad!==bd)return ad?1:-1;return new Date(b.submitDate)-new Date(a.submitDate);});
+  list=sortCases(list);
   document.getElementById('countLbl').textContent=`共 ${list.length} 筆`;
   if(!list.length){document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="10">📭 無符合案件</td></tr>';return;}
 
@@ -336,8 +430,7 @@ function renderTable(){
       <td class="td-product" title="${c.product||''}">${c.product||'—'}</td>
       <td class="td-date">${dateStr}</td>
       <td><span class="badge b-${statusKey}">${statusKey}</span></td>
-      <td style="text-align:center">${wdot}</td>
-      <td class="td-notify">${c.notified?'✅':'—'}</td>
+      <td class="td-notify" style="text-align:center">${c.notified?'✅':'—'}</td>
       <td style="text-align:right;font-weight:600;color:var(--text2);font-size:13px;">${priceStr}</td>
       <td class="td-days ${dCls}" style="text-align:center">${daysDisp}</td>
     </tr>`;
@@ -501,7 +594,7 @@ document.getElementById('mOv').addEventListener('click',function(e){if(e.target=
 
 function showToast(msg,t='s'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show '+t;setTimeout(()=>el.classList.remove('show'),3000);}
 
-loadCases();
+initMonthSelector();
 </script>
 </body>
 </html>
