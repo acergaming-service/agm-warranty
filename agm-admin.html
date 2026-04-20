@@ -373,8 +373,10 @@ function openDrawer(caseId){
       <div class="ditem full"><div class="dlbl">產品</div><div class="dval">${c.product||'—'}</div></div>
       <div class="ditem"><div class="dlbl">AGM PN</div><div class="dval">${c.agmPn||'—'}</div></div>
       <div class="ditem"><div class="dlbl">報修品原價</div><div class="dval" style="font-weight:700;color:var(--accent);">${c.msrp?'$'+Number(c.msrp).toLocaleString():'—'}</div></div>
+      ${(c.brand==='SteelSeries'||c.brand==='Razer')?`
+      <div class="ditem full"><div class="dlbl">原廠序號</div><div class="dval" style="font-family:monospace;font-size:13px;letter-spacing:1px;">${c.serial||'—'}</div></div>
+      `:''}
       ${c.brand==='SteelSeries'?`
-      <div class="ditem full"><div class="dlbl">原廠序號（19碼）</div><div class="dval" style="font-family:monospace;font-size:13px;letter-spacing:1px;">${c.serial||'—'}</div></div>
       <div class="ditem"><div class="dlbl">出廠日期</div><div class="dval">${c.mfgYear?c.mfgYear+'年'+c.mfgMonth+'月（第'+c.mfgWeek+'週）':'—'}</div></div>
       `:''}
       <div class="ditem"><div class="dlbl">進行天數</div><div class="dval" style="font-weight:700;color:${days>=14?'var(--warning)':'var(--text)'}">${days!==null?days+' 天':'—'}</div></div>
