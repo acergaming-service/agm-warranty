@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AGM 保修後台</title>
+<title>AGM 保固後台</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Inter:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -244,7 +244,7 @@ textarea:focus{border-color:var(--accent);}
 <div class="toast" id="toast"></div>
 
 <script>
-const API="https://script.google.com/macros/s/AKfycbxndrXlqb1eoiF_hO7CzQI2_PwFXj8OJ2d6M9T6g3kJlBQa8-yTiOMUiKyFsCCPHQsV/exec";
+const API="https://script.google.com/macros/s/AKfycbyQgljTqUS5DCGcyJXc3I6ZRs-ST9HZhrsdXrqaMnPMdSOVHkmvucr_oQzUhKyiODoi/exec";
 let cases=[],fBrand='ALL',fStatus='ACTIVE',current=null;
 
 const DONE=['手動結案','結案','已結案'];
@@ -301,7 +301,7 @@ async function loadCases(){
     if(d.success){
       cases=d.cases;
       calcStats();renderTable();
-      document.title='AGM 保修後台 ['+(d.version||'舊版')+']';
+      document.title='AGM 保固後台 ['+(d.version||'舊版')+']';
     }
   }catch{
     document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="9" style="color:var(--danger)">載入失敗，請重新整理</td></tr>';
