@@ -166,7 +166,10 @@ textarea:focus{border-color:var(--accent);}
       </select>
     </div>
     <button class="hdr-btn" onclick="loadCases()">↻ 重新整理</button>
-    <a href="index.html" class="hdr-btn">← 客戶頁面</a>
+    <div style="display:flex;align-items:center;gap:6px;border:1.5px solid var(--accent);border-radius:7px;padding:4px 12px;background:var(--accent-light);cursor:pointer;" onclick="switchEngineer()" title="點擊切換工程師">
+      <span style="font-size:13px;">👤</span>
+      <span id="engName" style="font-size:13px;font-weight:700;color:var(--accent);">未登入</span>
+    </div>
   </div>
 </header>
 
@@ -244,10 +247,42 @@ textarea:focus{border-color:var(--accent);}
 <div class="toast" id="toast"></div>
 
 <script>
-const API="https://script.google.com/macros/s/AKfycbyQgljTqUS5DCGcyJXc3I6ZRs-ST9HZhrsdXrqaMnPMdSOVHkmvucr_oQzUhKyiODoi/exec";
+const API="https://script.google.com/macros/s/AKfycbyhOnfZPJqtSpE1eN8uhVF40ImirjLRvFyqF8fYjEaL8JiutclZF9EnrwnaiEz3DdvS/exec";
 let cases=[],fBrand='ALL',fStatus='ACTIVE',current=null;
 
 const DONE=['手動結案','結案','已結案'];
+
+// ── 工程師身份識別 ────────────────────────────────────────────
+let currentEngineer = '';
+
+function initEngineer(){
+  const saved = localStorage.getItem('agm_engineer');
+  if(saved){
+    currentEngineer = saved;
+    document.getElementById('engName').textContent = saved;
+  } else {
+    promptEngineer(true);
+  }
+}
+
+function promptEngineer(required=false){
+  const name = prompt(required
+    ? '請輸入你的名字（將記錄在備註中）：'
+    : '切換工程師，請輸入名字：'
+  );
+  if(name && name.trim()){
+    currentEngineer = name.trim();
+    localStorage.setItem('agm_engineer', currentEngineer);
+    document.getElementById('engName').textContent = currentEngineer;
+  } else if(required){
+    currentEngineer = '未知工程師';
+    document.getElementById('engName').textContent = currentEngineer;
+  }
+}
+
+function switchEngineer(){
+  promptEngineer(false);
+}
 
 // 初始化：載入月份清單，預設選當月
 async function initMonthSelector(){
@@ -562,8 +597,11 @@ function confirmUpdate(){
 }
 
 async function doUpdate(status,tn,note,oiNo,ooNo){
+  // 備註加上工程師名稱
+  const engPrefix = currentEngineer ? `[${currentEngineer}] ` : '';
+  const noteWithEng = note ? engPrefix + note : '';
   try{
-    const d=await(await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatus',caseId:current.caseId,brand:current.brand,status,trackingNo:tn,notes:note,oiNo,ooNo})})).json();
+    const d=await(await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatus',caseId:current.caseId,brand:current.brand,status,trackingNo:tn,notes:noteWithEng,oiNo,ooNo,engineer:currentEngineer})})).json();
     if(d.success){
       const idx=cases.findIndex(c=>c.caseId===current.caseId);
       if(idx>=0){
@@ -594,6 +632,7 @@ document.getElementById('mOv').addEventListener('click',function(e){if(e.target=
 
 function showToast(msg,t='s'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show '+t;setTimeout(()=>el.classList.remove('show'),3000);}
 
+initEngineer();
 initMonthSelector();
 </script>
 </body>
