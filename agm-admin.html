@@ -153,7 +153,6 @@ textarea:focus{border-color:var(--accent);}
 <header>
   <div class="logo">AGM <span>保修後台</span></div>
   <div class="hdr-right">
-    <button class="hdr-btn" id="demoBtn" onclick="toggleDemo()" style="color:var(--text3);">🧪 示範模式</button>
     <button class="hdr-btn" onclick="loadCases()">↻ 重新整理</button>
     <a href="index.html" class="hdr-btn">← 客戶頁面</a>
   </div>
@@ -235,29 +234,6 @@ textarea:focus{border-color:var(--accent);}
 <script>
 const API="https://script.google.com/macros/s/AKfycbzBhqyh8-PqkmWu6Pld8SxFVGbT9wyN2jhC2Xisqk0z2ZXWdf8l3S-cUesfiLSj7HbX/exec";
 let cases=[],fBrand='ALL',fStatus='ALL',current=null;
-let demoMode=false;
-
-function toggleDemo(){
-  demoMode=!demoMode;
-  const btn=document.getElementById('demoBtn');
-  if(demoMode){
-    btn.style.color='var(--warning)';
-    btn.style.borderColor='var(--warning)';
-    btn.textContent='🧪 示範中（點擊關閉）';
-    document.title='AGM 保修後台 [示範模式]';
-    loadDemoData();
-  } else {
-    btn.style.color='var(--text3)';
-    btn.style.borderColor='';
-    btn.textContent='🧪 示範模式';
-    loadCases();
-  }
-}
-
-function loadDemoData(){
-  cases=DEMO_CASES;
-  calcStats();renderTable();
-}
 
 const DONE=['手動結案','結案','已結案'];
 
@@ -269,16 +245,11 @@ async function loadCases(){
       document.title='AGM 保修後台 ['+(d.version||'舊版')+']';
     }
   }catch{
-    // 載入失敗時顯示 Demo 資料
-    cases=DEMO_CASES;
-    calcStats();renderTable();
-    document.title='AGM 保修後台 [Demo模式]';
-    showToast('⚠️ 無法連線，顯示 Demo 資料','e');
+    document.getElementById('tbody').innerHTML='<tr><td class="empty-td" colspan="10" style="color:var(--danger)">載入失敗，請重新整理</td></tr>';
   }
 }
 
 // ── Demo 資料（最新30筆真實案件）──────────────────────────────
-const DEMO_CASES=[{"caseId":"AGM-RZ-2653","brand":"Razer","subBrand":"","status":"完成填表","name":"三井電腦(桃園NOVA一店) 陳淑雲","phone":"033330887","product":"ASTRO A10電競耳機綠色 V2","submitDate":"2026-04-17 20:24:58","email":"taylorswiftchen@gmail.com","warranty":"","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-RZ-2652","brand":"Razer","subBrand":"","status":"完成填表","name":"三井電腦(桃園NOVA一店) 陳淑雲","phone":"033330887","product":"Razer Kishi Ultra - USB C","submitDate":"2026-04-17 19:18:03","email":"taylorswiftchen@gmail.com","warranty":"","agmPn":"","notified":false,"msrp":4790,"oiNo":"","ooNo":""},{"caseId":"AGM-Other-2636","brand":"其他品牌","subBrand":"羅技(Logitech)","status":"完成填表","name":"良興維修部","phone":"0222784690","product":"Logitech A10 V2 白","submitDate":"2026-04-17 12:11:11","email":"mxc@ls3c.com.tw","warranty":"","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-SS-26105","brand":"SteelSeries","subBrand":"","status":"完成填表","name":"沈竑毅","phone":"0975903182","product":"arctis gamebuds","submitDate":"2026-04-16 23:07:17","email":"henry010590@gmail.com","warranty":"✅ 在保固內","agmPn":"ZL.A00TZ.18N","notified":false,"msrp":5690,"oiNo":"","ooNo":""},{"caseId":"AGM-RZ-2651","brand":"Razer","subBrand":"","status":"完成填表","name":"黃啟賓","phone":"0972942162","product":"Razer BlackShark V2 Pro XBOX","submitDate":"2026-04-16 18:03:26","email":"pchot888sho@gmail.com","warranty":"","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-RZ-2650","brand":"Razer","subBrand":"","status":"完成填表","name":"黃啟賓","phone":"0972942162","product":"Razer Hammerhead HyperSpeed","submitDate":"2026-04-16 17:59:44","email":"pchot888sho@gmail.com","warranty":"","agmPn":"","notified":false,"msrp":5190,"oiNo":"","ooNo":""},{"caseId":"AGM-RZ-2649","brand":"Razer","subBrand":"","status":"完成填表","name":"張傑閔","phone":"0982389475","product":"雷蛇basilisk v3 pro無線電競滑鼠","submitDate":"2026-04-16 17:58:53","email":"a1902034@gmail.com","warranty":"❌ 已過保固","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-Other-2635","brand":"其他品牌","subBrand":"Xbox 手把","status":"完成填表","name":"林端崧","phone":"07 7935213","product":"XBOX 無線控制器-磨砂黑","submitDate":"2026-04-15 16:16:02","email":"7749950@sunfar.com.tw","warranty":"","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-RZ-2648","brand":"Razer","subBrand":"","status":"完成填表","name":"郭恆瑞","phone":"0979848888","product":"razer blade 16 2024","submitDate":"2026-04-15 05:52:26","email":"31design.henry@gmail.com","warranty":"","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-SS-26104","brand":"SteelSeries","subBrand":"","status":"完成填表","name":"林家潁","phone":"0966712987","product":"Steelseries Arctis Nova 5","submitDate":"2026-04-14 22:09:48","email":"a20030623@gmail.com","warranty":"✅ 在保固內","agmPn":"ZL.A00TZ.0XP","notified":false,"msrp":4390,"oiNo":"","ooNo":""},{"caseId":"AGM-Other-2634","brand":"其他品牌","subBrand":"羅技(Logitech)","status":"收件歸檔","name":"劉子銘","phone":"076258988","product":"羅技 G923模擬賽車方向盤","submitDate":"2026-04-13 15:26:18","email":"sfks10761@gmail.com","warranty":"✅ 在保固內","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-SS-26103","brand":"SteelSeries","subBrand":"","status":"收貨歸檔","name":"鄒鴻健","phone":"0905198623","product":"Aerox 3 Wireless Ghost","submitDate":"2026-04-12 21:03:45","email":"kcaw1028@gmail.com","warranty":"✅ 在保固內","agmPn":"ZL.A00TZ.0WU","notified":false,"msrp":3690,"oiNo":"","ooNo":""},{"caseId":"AGM-SS-26102","brand":"SteelSeries","subBrand":"","status":"已結案","name":"","phone":"","product":"","submitDate":"2026-04-12 20:55:44","email":"dreamwalkerma@gmail.com","warranty":"","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":"","closedDays":3},{"caseId":"AGM-SS-26101","brand":"SteelSeries","subBrand":"","status":"收貨歸檔","name":"原價屋電腦股份有限公司","phone":"02-23972669#123","product":"SteelSeries Arctis Nova Pro Wireless 無線耳機(黑) PS版","submitDate":"2026-04-11 18:26:01","email":"repair@ms1.coolpc.com.tw","warranty":"✅ 在保固內","agmPn":"ZL.A00TZ.100","notified":false,"msrp":13990,"oiNo":"","ooNo":""},{"caseId":"AGM-SS-26100","brand":"SteelSeries","subBrand":"","status":"收貨歸檔","name":"呂奇燁","phone":"0988393097","product":"SteelSeries Arctis Nova Elite 無線電競耳機","submitDate":"2026-04-11 17:51:44","email":"littlewhite1015@gmail.com","warranty":"✅ 在保固內","agmPn":"ZL.A00TZ.1NN","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-SS-2699","brand":"SteelSeries","subBrand":"","status":"排測中","name":"高達彥","phone":"0973392286","product":"Aerox3 wireless(2022)","submitDate":"2026-04-11 17:10:12","email":"a1681134@gmail.com","warranty":"✅ 在保固內","agmPn":"ZL.A00TZ.0WU","notified":false,"msrp":3690,"oiNo":"","ooNo":""},{"caseId":"AGM-SS-2698","brand":"SteelSeries","subBrand":"","status":"收貨歸檔","name":"張庭瑋","phone":"0983183978","product":"Nova 7P Gen 2","submitDate":"2026-04-10 17:25:56","email":"google.earshot255@passmail.com","warranty":"🔍 需人工確認","agmPn":"沒有該料號","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-RZ-2647","brand":"Razer","subBrand":"","status":"完成填表","name":"王彥鈞","phone":"0966515082","product":"Razer KAIRA X PlayStation Licensed 電競耳機","submitDate":"2026-04-08 22:39:19","email":"kenwang96928@gmail.com","warranty":"","agmPn":"","notified":false,"msrp":2190,"oiNo":"","ooNo":""},{"caseId":"AGM-Other-2633","brand":"其他品牌","subBrand":"Xbox 手把","status":"收件歸檔","name":"曾福文","phone":"0936-636-577","product":"微軟Xbox 無線控制器-磨砂黑","submitDate":"2026-04-07 15:51:06","email":"z0936636577@hotmail.com","warranty":"","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-Other-2632","brand":"其他品牌","subBrand":"羅技(Logitech)","status":"收件歸檔","name":"三井資訊-吳映蓁","phone":"02-29995315","product":"Logitech G Cloud 雲端遊戲掌機","submitDate":"2026-04-07 15:47:57","email":"wyz8973@sanjing.com.tw","warranty":"✅ 在保固內","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-SS-2697","brand":"SteelSeries","subBrand":"","status":"可換貨","name":"劉育瑋","phone":"0906651796","product":"Steelseries Aerox 3 Wireless Ghost","submitDate":"2026-04-07 14:45:29","email":"yuwei910910@gmail.com","warranty":"✅ 在保固內","agmPn":"ZL.A00TZ.0WU","notified":false,"msrp":3690,"oiNo":"","ooNo":""},{"caseId":"AGM-SS-2696","brand":"SteelSeries","subBrand":"","status":"原件退回","name":"王瑞宏","phone":"0988350005","product":"arctis gamebuds","submitDate":"2026-04-06 17:13:14","email":"r26888841@gmail.com","warranty":"✅ 在保固內","agmPn":"ZL.A00TZ.18O","notified":false,"msrp":5690,"oiNo":"","ooNo":""},{"caseId":"AGM-RZ-2646","brand":"Razer","subBrand":"","status":"完成填表","name":"黃啟賓","phone":"034681186","product":"Razer BlackShark V2 Pro","submitDate":"2026-04-02 17:35:49","email":"pchot888sho@gmail.com","warranty":"","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-RZ-2645","brand":"Razer","subBrand":"","status":"收件起單","name":"歐宗憲","phone":"0952235698","product":"Razer Kaira HyperSpeed 無線雙模電競耳麥-白","submitDate":"2026-03-30 20:19:09","email":"game4fund66@gmail.com","warranty":"","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-Other-2631","brand":"其他品牌","subBrand":"其他品牌 (由宏碁遊戲代理)","status":"完成填表","name":"鄭宇順","phone":"0919328727","product":"Acer Nitro Mouse III 有線電競滑鼠","submitDate":"2026-03-27 02:29:01","email":"v87018620@gmail.com","warranty":"","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-Other-2630","brand":"其他品牌","subBrand":"Acer/Acer Predator","status":"收件歸檔","name":"洪志文","phone":"0976-583-839","product":"Acer Keyboard NKW202 Nitro Full Size Wired USB","submitDate":"2026-03-24 13:55:09","email":"sky491914@gmail.com","warranty":"❌ 已過保固","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-Other-2629","brand":"其他品牌","subBrand":"羅技(Logitech)","status":"收件歸檔","name":"良興維修部","phone":"0222784690","product":"LOGITECH ASTRO A10 V2灰","submitDate":"2026-03-23 16:24:18","email":"mxc@ls3c.com.tw","warranty":"✅ 在保固內","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-Other-2628","brand":"其他品牌","subBrand":"羅技(Logitech)","status":"收件歸檔","name":"羅技台茂店","phone":"033119822","product":"ASTRO","submitDate":"2026-03-23 12:53:36","email":"l1mail@sanjing.com.tw","warranty":"✅ 在保固內","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-Other-2627","brand":"其他品牌","subBrand":"Xbox 手把","status":"收件歸檔","name":"順發3C-新竹店","phone":"03-5727119#613","product":"XBOX 無線控制器-冰雪白 (新包裝)","submitDate":"2026-03-19 21:16:03","email":"sf00013@sunfar.com.tw","warranty":"","agmPn":"","notified":false,"msrp":"","oiNo":"","ooNo":""},{"caseId":"AGM-RZ-25219","brand":"Razer","subBrand":"","status":"已結案","name":"劉泰佑","phone":"(04)2251-5318","product":"Razer Wolverine V2 Chroma遊戲手把-黑","submitDate":"2025-03-12 15:33:00","email":"topcitygame@gmail.com","warranty":"✅ 在保固內","agmPn":"","notified":true,"msrp":4499,"oiNo":"","ooNo":"","closedDays":12}];
 
 function calcStats(){
   document.getElementById('s0').textContent=cases.length;
