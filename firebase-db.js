@@ -12,9 +12,7 @@ import {
   query, where, orderBy, limit,
   serverTimestamp, Timestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import {
-  getStorage, ref, uploadBytes, getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+// Firebase Storage 需要 Blaze 付費方案，憑證上傳走 Apps Script（Google Drive）
 
 // ── Firebase 設定 ────────────────────────────────────────────
 const firebaseConfig = {
@@ -26,12 +24,11 @@ const firebaseConfig = {
   appId:             "1:130595956759:web:a8eebcbdd4f4c975729452"
 };
 
-const app     = initializeApp(firebaseConfig);
-const db      = getFirestore(app);
-const storage = getStorage(app);
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
 
 // Apps Script URL（只用於寄信）
-const MAIL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOJLo5eTqQRn7oTKMXeiyIooFAWNR2Ab2XcqIZOJ80eH-sBpHeVyJgwkfTODfsxpis/exec";
+const MAIL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzMJBpIURqIUayEW7yJXk8RGHWnRk-zzjIMxcwLBRMm-OBvFIU74WCGJ469nWgpZOh3/exec";
 
 // ── 保固規則（與 index.html 同步）───────────────────────────
 function checkWarranty(brand, purchaseDate, serial, productName) {
@@ -351,19 +348,35 @@ export async function updateCaseStatus({ caseId, docId, status, trackingNo, note
 }
 
 // ============================================================
-//  購買憑證上傳（Firebase Storage）
+//  購買憑證上傳（走 Apps Script → Google Drive）
+//  Firebase Storage 需要 Blaze 付費方案，維持原本 Drive 方式
 // ============================================================
 export async function uploadInvoice(file) {
   if (!file) return { success: false, error: "無檔案" };
   if (file.size > 10 * 1024 * 1024) return { success: false, error: "檔案超過 10MB" };
 
-  const ext      = file.name.split(".").pop();
-  const filename = `invoices/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-  const storageRef = ref(storage, filename);
-
-  await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(storageRef);
-  return { success: true, url };
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const base64 = reader.result.split(",")[1];
+        const resp = await fetch(MAIL_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action:   "upload",
+            fileData: base64,
+            mimeType: file.type,
+            fileName: file.name,
+          }),
+        });
+        const data = await resp.json();
+        resolve(data.success ? { success: true, url: data.url } : { success: false, error: "上傳失敗" });
+      } catch {
+        resolve({ success: false, error: "網路錯誤" });
+      }
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 // ── 呼叫 Apps Script 寄信（fire-and-forget）──────────────────
