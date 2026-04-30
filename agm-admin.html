@@ -165,9 +165,9 @@ textarea:focus{border-color:var(--accent);}
     <div class="fchip active" onclick="setBrand('ALL',this)">全部品牌</div>
     <div class="fchip" onclick="setBrand('SteelSeries',this)">SteelSeries</div>
     <div class="fchip" onclick="setBrand('Razer',this)">Razer</div>
-    <div class="fchip" onclick="setBrand('Logitech',this)">Logitech</div>
-    <div class="fchip" onclick="setBrand('Acer',this)">Acer/Predator</div>
-    <div class="fchip" onclick="setBrand('AGM',this)">AGM 自有</div>
+    <div class="fchip" onclick="setBrand('羅技(Logitech)',this)">Logitech</div>
+    <div class="fchip" onclick="setBrand('Acer/Acer Predator',this)">Acer/Predator</div>
+    <div class="fchip" onclick="setBrand('AGM_OWN',this)">AGM 自有</div>
     <div class="fchip" onclick="setBrand('Xbox 手把',this)">Xbox</div>
   </div>
   <span class="count-lbl" id="countLbl">共 0 筆</span>
@@ -179,11 +179,11 @@ textarea:focus{border-color:var(--accent);}
     <thead>
       <tr>
         <th onclick="sortBy('caseId')">案件編號</th>
-        <th onclick="sortBy('brand')">品牌</th>
+        <th onclick="sortBy('status')">狀態</th>
         <th onclick="sortBy('name')">姓名</th>
         <th>產品</th>
         <th onclick="sortBy('submitDate')">申請日期</th>
-        <th onclick="sortBy('status')">狀態</th>
+        <th onclick="sortBy('brand')">品牌</th>
         <th style="text-align:center;">保固</th>
         <th style="text-align:center;">通知信</th>
         <th style="text-align:right;" onclick="sortBy('msrp')">原價</th>
@@ -282,8 +282,29 @@ window.sortBy = (key) => {
   renderTable();
 };
 
+// 品牌篩選 mapping：把各種資料裡的品牌名稱對應到篩選 key
+const BRAND_MAP = {
+  'SteelSeries':                        'SteelSeries',
+  'Razer':                              'Razer',
+  '羅技(Logitech)':                     '羅技(Logitech)',
+  'Logitech':                           '羅技(Logitech)',
+  'Acer/Acer Predator':                 'Acer/Acer Predator',
+  'Acer':                               'Acer/Acer Predator',
+  'AGM':                                'AGM_OWN',
+  'AGM自有品牌':                        'AGM_OWN',
+  '其他品牌 (由宏碁遊戲代理)':          'AGM_OWN',
+  'Xbox 手把':                          'Xbox 手把',
+  'Xbox':                               'Xbox 手把',
+};
+function normBrand(b) { return BRAND_MAP[b] || b; }
 function brandShort(brand){
-  const map={'SteelSeries':'SS','Razer':'Razer','羅技(Logitech)':'Logitech','Logitech':'Logitech','Acer/Acer Predator':'Acer','Acer':'Acer','Xbox 手把':'Xbox','AGM':'AGM'};
+  const map={
+    'SteelSeries':'SS','Razer':'Razer',
+    '羅技(Logitech)':'Logitech','Logitech':'Logitech',
+    'Acer/Acer Predator':'Acer','Acer':'Acer',
+    'AGM':'AGM','AGM自有品牌':'AGM','其他品牌 (由宏碁遊戲代理)':'AGM',
+    'Xbox 手把':'Xbox','Xbox':'Xbox',
+  };
   return map[brand]||brand;
 }
 function brandBadge(brand){
@@ -296,7 +317,7 @@ function brandBadge(brand){
 function renderTable(){
   const q=document.getElementById('searchInput').value.toLowerCase();
   let list=cases.filter(c=>{
-    if(fBrand!=='ALL' && c.brand!==fBrand) return false;
+    if(fBrand!=='ALL' && normBrand(c.brand)!==fBrand) return false;
     if(fStatus==='WARRANTY') return c.warranty&&(c.warranty.includes('❌')||c.warranty.includes('🚫')||c.warranty.includes('🔀'));
     if(fStatus==='已結案') return DONE.includes(c.status);
     if(fStatus!=='ALL'&&c.status!==fStatus) return false;
@@ -334,11 +355,11 @@ function renderTable(){
     const priceStr=c.msrp?'$'+Number(c.msrp).toLocaleString():'—';
     return `<tr onclick="openDrawer('${c.caseId}')" class="${current?.caseId===c.caseId?'sel':''}">
       <td class="td-id">${c.caseId}</td>
-      <td>${brandBadge(c.brand)}</td>
+      <td><span class="badge b-${statusKey}">${statusKey}</span></td>
       <td class="td-name">${c.name||'—'}</td>
       <td class="td-product" title="${c.product||''}">${c.product||'—'}</td>
       <td class="td-date">${dateStr}</td>
-      <td><span class="badge b-${statusKey}">${statusKey}</span></td>
+      <td>${brandBadge(c.brand)}</td>
       <td style="text-align:center">${wdot}</td>
       <td class="td-notify">${c.notified?'✅':'—'}</td>
       <td style="text-align:right;font-weight:600;color:var(--text2);font-size:13px;">${priceStr}</td>
