@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>AGM 案件資料匯入</title>
+<style>
+  body { font-family: 'Noto Sans TC', monospace; background: #f5f7fa; color: #202124; padding: 32px; max-width: 720px; margin: 0 auto; }
+  h2 { font-size: 20px; margin-bottom: 6px; }
+  .desc { color: #5f6368; font-size: 14px; margin-bottom: 24px; line-height: 1.7; }
+  .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 24px; }
+  .stat { background: #fff; border: 1px solid #d8e0ea; border-radius: 8px; padding: 12px 16px; }
+  .stat-num { font-size: 24px; font-weight: 700; color: #1a73e8; }
+  .stat-lbl { font-size: 12px; color: #9aa0a6; margin-top: 2px; }
+  button { padding: 11px 28px; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all .2s; }
+  .btn-go { background: #1a73e8; color: #fff; margin-right: 10px; }
+  .btn-go:hover { background: #1557b0; }
+  .btn-go:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-clear { background: #fce8e6; color: #d93025; border: 1px solid #f5b8b5; }
+  .btn-clear:hover { background: #f8d0ce; }
+  progress { width: 100%; height: 10px; border-radius: 5px; margin: 16px 0 6px; display: none; }
+  #log { background: #fff; border: 1px solid #d8e0ea; border-radius: 10px; padding: 16px; margin-top: 16px; height: 320px; overflow-y: auto; font-size: 13px; line-height: 1.9; }
+  .ok   { color: #1e8e3e; }
+  .err  { color: #d93025; }
+  .info { color: #1a73e8; }
+  .warn { color: #e37400; }
+</style>
+</head>
+<body>
+<h2>📦 AGM 案件歷史資料匯入工具</h2>
+<div class="desc">
+  將三個 xlsx 的案件資料一次性匯入 Firestore。<br>
+  請先確認 <code>cases_1.json</code> 和 <code>cases_2.json</code> 已上傳至 GitHub 同一目錄。
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num">1,086</div><div class="stat-lbl">SteelSeries</div></div>
+  <div class="stat"><div class="stat-num">244</div><div class="stat-lbl">Razer</div></div>
+  <div class="stat"><div class="stat-num">106</div><div class="stat-lbl">Logitech / Acer / Xbox</div></div>
+</div>
+
+<button class="btn-go" id="btnGo" onclick="startImport()">▶ 開始匯入（共 1,436 筆）</button>
+<button class="btn-clear" onclick="clearCases()">🗑 清除 Firestore cases</button>
+<progress id="prog" max="100" value="0"></progress>
+<div style="font-size:13px;color:#9aa0a6;" id="progLbl"></div>
+<div id="log"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, doc,
+  writeBatch, getDocs, query, limit
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyAtyrpyLSrUHhrDdnqwdJjpzmZGK9vbzUQ",
+  authDomain:        "agm-warranty.firebaseapp.com",
+  projectId:         "agm-warranty",
+  storageBucket:     "agm-warranty.firebasestorage.app",
+  messagingSenderId: "130595956759",
+  appId:             "1:130595956759:web:a8eebcbdd4f4c975729452"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const logEl  = document.getElementById('log');
+const progEl = document.getElementById('prog');
+const lblEl  = document.getElementById('progLbl');
+
+function log(msg, cls='info') {
+  logEl.innerHTML += `<div class="${cls}">${msg}</div>`;
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function setProgress(done, total) {
+  progEl.value = Math.round(done / total * 100);
+  lblEl.textContent = `${done} / ${total} 筆（${Math.round(done/total*100)}%）`;
+}
+
+function prepareRecord(r) {
+  const rec = { ...r };
+  if (rec.submitDate) {
+    try { rec.submitDate = new Date(rec.submitDate); } catch { rec.submitDate = null; }
+  }
+  if (rec.purchaseDate) {
+    try { rec.purchaseDate = new Date(rec.purchaseDate).toISOString().split('T')[0]; } catch { rec.purchaseDate = ''; }
+  }
+  return rec;
+}
+
+window.startImport = async () => {
+  document.getElementById('btnGo').disabled = true;
+  progEl.style.display = 'block';
+  log('📥 載入資料檔...', 'info');
+
+  try {
+    const [r1, r2] = await Promise.all([
+      fetch('./cases_1.json').then(r => r.json()),
+      fetch('./cases_2.json').then(r => r.json()),
+    ]);
+    const records = [...r1, ...r2];
+    log(`✅ 載入完成，共 ${records.length} 筆`, 'ok');
+
+    const BATCH_SIZE = 400;
+    let done = 0;
+
+    for (let i = 0; i < records.length; i += BATCH_SIZE) {
+      const batch = writeBatch(db);
+      const chunk = records.slice(i, i + BATCH_SIZE);
+      chunk.forEach(r => {
+        const docRef = doc(collection(db, 'cases'), r.caseId);
+        batch.set(docRef, prepareRecord(r));
+      });
+      await batch.commit();
+      done += chunk.length;
+      setProgress(done, records.length);
+      log(`✅ 已寫入 ${done} / ${records.length} 筆`, 'ok');
+    }
+
+    log(`🎉 匯入完成！共 ${done} 筆`, 'ok');
+    log('💡 完成後可將此頁和 JSON 檔從 GitHub 刪除', 'warn');
+  } catch(e) {
+    log('❌ 錯誤：' + e.message, 'err');
+    document.getElementById('btnGo').disabled = false;
+  }
+};
+
+window.clearCases = async () => {
+  if (!confirm('確定要清除 Firestore 裡所有 cases 資料？')) return;
+  log('🗑 開始清除...', 'warn');
+  let total = 0;
+  while (true) {
+    const snap = await getDocs(query(collection(db, 'cases'), limit(400)));
+    if (snap.empty) break;
+    const batch = writeBatch(db);
+    snap.docs.forEach(d => batch.delete(d.ref));
+    await batch.commit();
+    total += snap.size;
+    log(`已刪除 ${total} 筆...`, 'warn');
+  }
+  log(`✅ 清除完成，共刪除 ${total} 筆`, 'ok');
+};
+</script>
+</body>
+</html>
