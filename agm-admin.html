@@ -145,14 +145,17 @@ textarea:focus{border-color:var(--accent);}
 
 <!-- Stats -->
 <div class="stats-bar">
-  <div class="stat-pill active" onclick="setStatus('ALL',this)"><span class="stat-num sn-all" id="s0">0</span>全部</div>
-  <div class="stat-pill" onclick="setStatus('完成填表',this)"><span class="stat-num sn-pending" id="s1">0</span>待收件</div>
-  <div class="stat-pill" onclick="setStatus('收貨歸檔',this)"><span class="stat-num sn-testing" id="s2">0</span>收貨歸檔</div>
-  <div class="stat-pill" onclick="setStatus('排測中',this)"><span class="stat-num sn-testing" id="s3">0</span>排測中</div>
-  <div class="stat-pill" onclick="setStatus('可換貨',this)"><span class="stat-num sn-exchange" id="s4">0</span>可換貨</div>
-  <div class="stat-pill" onclick="setStatus('原件退回',this)"><span class="stat-num sn-return" id="s5">0</span>原件退回</div>
-  <div class="stat-pill" onclick="setStatus('已結案',this)"><span class="stat-num sn-done" id="s6">0</span>已結案</div>
-  <div class="stat-pill" onclick="setStatus('WARRANTY',this)" style="margin-left:auto;"><span class="stat-num sn-issue" id="s7">0</span>保固異常</div>
+  <div class="stat-pill active" onclick="toggleStatus('完成填表',this)"><span class="stat-num sn-pending" id="s1">0</span>待收件</div>
+  <div class="stat-pill active" onclick="toggleStatus('收貨歸檔',this)"><span class="stat-num sn-testing" id="s2">0</span>收貨歸檔</div>
+  <div class="stat-pill active" onclick="toggleStatus('收件歸檔',this)"><span class="stat-num sn-testing" id="s2b">0</span>收件歸檔</div>
+  <div class="stat-pill active" onclick="toggleStatus('排測中',this)"><span class="stat-num sn-testing" id="s3">0</span>排測中</div>
+  <div class="stat-pill active" onclick="toggleStatus('可換貨',this)"><span class="stat-num sn-exchange" id="s4">0</span>可換貨</div>
+  <div class="stat-pill active" onclick="toggleStatus('原件退回',this)"><span class="stat-num sn-return" id="s5">0</span>原件退回</div>
+  <div class="stat-pill" onclick="toggleStatus('已結案',this)"><span class="stat-num sn-done" id="s6">0</span>已結案</div>
+  <div class="stat-pill active" onclick="toggleStatus('逾期未收到寄件',this)"><span class="stat-num sn-pending" id="s8">0</span>逾期未收</div>
+  <div class="stat-pill active" onclick="toggleStatus('未收到',this)"><span class="stat-num sn-pending" id="s9">0</span>未收到</div>
+  <div class="stat-pill" onclick="toggleStatus('ALL',this)" style="border-style:dashed;">全選/清除</div>
+  <div class="stat-pill" onclick="toggleStatus('WARRANTY',this)" style="margin-left:auto;"><span class="stat-num sn-issue" id="s7">0</span>保固異常</div>
 </div>
 
 <!-- Toolbar -->
@@ -220,9 +223,13 @@ textarea:focus{border-color:var(--accent);}
 import { listAllCases, listAvailableMonths, updateCaseStatus } from './firebase-db.js';
 
 // ── 狀態 ────────────────────────────────────────────────────
-let cases=[], fBrand='ALL', fStatus='ALL', fMonth='ALL', current=null;
+let cases=[], fBrand='ALL', fMonth='ALL', current=null;
 let sortKey='submitDate', sortDir=-1;
 const DONE=['手動結案','結案','已結案'];
+// 預設顯示所有進行中狀態，排除已結案
+const ALL_ACTIVE = new Set(['完成填表','收貨歸檔','收件歸檔','排測中','可換貨','原件退回','逾期未收到寄件','未收到']);
+let activeStatuses = new Set(ALL_ACTIVE);
+let warrantyOnly = false;
 
 // ── 工程師身份（localStorage）────────────────────────────────
 let engineerName = localStorage.getItem('agm_engineer') || '';
@@ -264,18 +271,49 @@ window.loadCases = async function() {
 };
 
 function calcStats(){
-  document.getElementById('s0').textContent=cases.length;
-  document.getElementById('s1').textContent=cases.filter(c=>c.status==='完成填表').length;
-  document.getElementById('s2').textContent=cases.filter(c=>c.status==='收貨歸檔'||c.status==='收件歸檔').length;
-  document.getElementById('s3').textContent=cases.filter(c=>c.status==='排測中').length;
-  document.getElementById('s4').textContent=cases.filter(c=>c.status==='可換貨').length;
-  document.getElementById('s5').textContent=cases.filter(c=>c.status==='原件退回').length;
-  document.getElementById('s6').textContent=cases.filter(c=>DONE.includes(c.status)).length;
-  document.getElementById('s7').textContent=cases.filter(c=>c.warranty&&(c.warranty.includes('❌')||c.warranty.includes('🚫')||c.warranty.includes('🔀'))).length;
+  const el = id => document.getElementById(id);
+  if(el('s1')) el('s1').textContent=cases.filter(c=>c.status==='完成填表').length;
+  if(el('s2')) el('s2').textContent=cases.filter(c=>c.status==='收貨歸檔').length;
+  if(el('s2b')) el('s2b').textContent=cases.filter(c=>c.status==='收件歸檔').length;
+  if(el('s3')) el('s3').textContent=cases.filter(c=>c.status==='排測中').length;
+  if(el('s4')) el('s4').textContent=cases.filter(c=>c.status==='可換貨').length;
+  if(el('s5')) el('s5').textContent=cases.filter(c=>c.status==='原件退回').length;
+  if(el('s6')) el('s6').textContent=cases.filter(c=>DONE.includes(c.status)).length;
+  if(el('s7')) el('s7').textContent=cases.filter(c=>c.warranty&&(c.warranty.includes('❌')||c.warranty.includes('🚫')||c.warranty.includes('🔀'))).length;
+  if(el('s8')) el('s8').textContent=cases.filter(c=>c.status==='逾期未收到寄件').length;
+  if(el('s9')) el('s9').textContent=cases.filter(c=>c.status==='未收到').length;
 }
 
 window.setBrand = (v,el) => { fBrand=v; el.closest('.filter-grp').querySelectorAll('.fchip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); renderTable(); };
-window.setStatus = (v,el) => { fStatus=v; document.querySelectorAll('.stat-pill').forEach(c=>c.classList.remove('active')); el.classList.add('active'); renderTable(); };
+window.toggleStatus = (v, el) => {
+  if (v === 'ALL') {
+    // 全選/清除切換
+    if (activeStatuses.size > 0 || warrantyOnly) {
+      activeStatuses = new Set();
+      warrantyOnly = false;
+      document.querySelectorAll('.stat-pill').forEach(p => p.classList.remove('active'));
+    } else {
+      activeStatuses = new Set(ALL_ACTIVE);
+      warrantyOnly = false;
+      document.querySelectorAll('.stat-pill').forEach(p => {
+        const v2 = p.getAttribute('onclick')?.match(/toggleStatus\('(.+?)'/)?.[1];
+        if (v2 && v2 !== 'ALL' && v2 !== 'WARRANTY' && v2 !== '已結案') p.classList.add('active');
+        else p.classList.remove('active');
+      });
+    }
+  } else if (v === 'WARRANTY') {
+    warrantyOnly = !warrantyOnly;
+    el.classList.toggle('active', warrantyOnly);
+  } else if (v === '已結案') {
+    const isDone = activeStatuses.has('已結案');
+    if (isDone) { DONE.forEach(d => activeStatuses.delete(d)); el.classList.remove('active'); }
+    else { DONE.forEach(d => activeStatuses.add(d)); el.classList.add('active'); }
+  } else {
+    if (activeStatuses.has(v)) { activeStatuses.delete(v); el.classList.remove('active'); }
+    else { activeStatuses.add(v); el.classList.add('active'); }
+  }
+  renderTable();
+};
 
 window.sortBy = (key) => {
   if(sortKey===key) sortDir*=-1; else { sortKey=key; sortDir=-1; }
@@ -318,9 +356,12 @@ function renderTable(){
   const q=document.getElementById('searchInput').value.toLowerCase();
   let list=cases.filter(c=>{
     if(fBrand!=='ALL' && normBrand(c.brand)!==fBrand) return false;
-    if(fStatus==='WARRANTY') return c.warranty&&(c.warranty.includes('❌')||c.warranty.includes('🚫')||c.warranty.includes('🔀'));
-    if(fStatus==='已結案') return DONE.includes(c.status);
-    if(fStatus!=='ALL'&&c.status!==fStatus) return false;
+    if(warrantyOnly) return c.warranty&&(c.warranty.includes('❌')||c.warranty.includes('🚫')||c.warranty.includes('🔀'));
+    if(activeStatuses.size > 0) {
+      const isDone = DONE.includes(c.status);
+      const effStatus = isDone ? '已結案' : c.status;
+      if(!activeStatuses.has(effStatus) && !(isDone && activeStatuses.has('已結案'))) return false;
+    }
     if(q&&![(c.caseId||''),(c.name||''),(c.product||''),(c.email||''),(c.brand||'')].join(' ').toLowerCase().includes(q)) return false;
     return true;
   });
