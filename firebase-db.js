@@ -208,6 +208,39 @@ export async function findCase(caseId) {
 }
 
 // ============================================================
+//  Pricebook 查詢（SS 序號前5碼 → AGM PN + MSRP）
+// ============================================================
+let _pbCache = null;
+
+async function getPricebook() {
+  if (_pbCache) return _pbCache;
+  const snap = await getDocs(collection(db, "pricebook"));
+  _pbCache = {};
+  snap.forEach(d => { _pbCache[d.id] = d.data(); });
+  return _pbCache;
+}
+
+export async function lookupPrice(serial, brand, agbsPn) {
+  const pb = await getPricebook();
+
+  if (brand === 'SteelSeries' && serial) {
+    const key = 'SS_' + String(serial).substring(0, 5);
+    const hit = pb[key];
+    return hit ? { agmPn: hit.agmPn, msrp: hit.msrp, nameEN: hit.nameEN, nameTW: hit.nameTW } : { agmPn: '', msrp: '' };
+  }
+
+  if (brand === 'Razer' && agbsPn) {
+    const key = 'RZ_' + agbsPn;
+    const hit = pb[key];
+    return hit ? { agmPn: hit.agbsPn, msrp: hit.msrp, name: hit.name, series: hit.series } : { agmPn: '', msrp: '' };
+  }
+
+  return { agmPn: '', msrp: '' };
+}
+
+export function clearPricebookCache() { _pbCache = null; }
+
+// ============================================================
 //  後台：列出案件（支援月份、品牌、狀態篩選）
 // ============================================================
 export async function listAllCases({ year, month, brand = "ALL", status = "ALL" } = {}) {
@@ -225,9 +258,24 @@ export async function listAllCases({ year, month, brand = "ALL", status = "ALL" 
   // 品牌篩選（Firestore 限制：多個 where + orderBy 需要複合索引，建議先用 ALL 再前端過濾）
   const snap = await getDocs(query(q, ...constraints));
   let cases = [];
+  const pb  = await getPricebook(); // 一次載入 pricebook
 
   snap.forEach(d => {
     const data = d.data();
+
+    // 查 AGM PN + MSRP
+    let agmPn = data.agmPn || "";
+    let msrp  = data.msrp  || "";
+    if (data.brand === "SteelSeries" && data.serial) {
+      const key = "SS_" + String(data.serial).substring(0, 5);
+      const hit = pb[key];
+      if (hit) { agmPn = hit.agmPn; msrp = hit.msrp; }
+    }
+    if (data.brand === "Razer" && data.agbsPn) {
+      const key = "RZ_" + data.agbsPn;
+      const hit = pb[key];
+      if (hit) { agmPn = hit.agbsPn; msrp = hit.msrp; }
+    }
     cases.push({
       docId:      d.id,
       caseId:     data.caseId,
@@ -237,10 +285,11 @@ export async function listAllCases({ year, month, brand = "ALL", status = "ALL" 
       phone:      data.phone,
       email:      data.email,
       product:    data.product,
+      serial:     data.serial    || "",
       submitDate: data.submitDate?.toDate?.() || null,
       warranty:   data.warranty,
-      agmPn:      data.agmPn     || "",
-      msrp:       data.msrp      || "",
+      agmPn,
+      msrp,
       notified:   data.notified  || false,
       closedDays: data.closedDays || null,
       oiNo:       data.oiNo      || "",
