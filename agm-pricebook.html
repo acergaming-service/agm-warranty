@@ -305,6 +305,7 @@ td { padding:10px 14px; vertical-align:middle; }
     <div class="file-chip" id="ss-file-chip">📂 選擇 CSV 檔案</div>
     <input type="file" id="ss-csv-file" accept=".csv" onchange="onFileSelect('ss',this)">
   </div>
+  <button class="btn btn-ghost btn-sm" onclick="downloadSample('ss')">⬇ 下載範例格式</button>
   <div class="col-map" id="ss-col-map" style="display:none;">
     <span class="col-label">SS PN 欄：</span>
     <select class="col-select" id="ss-col-sspn"></select>
@@ -329,6 +330,7 @@ td { padding:10px 14px; vertical-align:middle; }
     <div class="file-chip" id="rz-file-chip">📂 選擇 CSV 檔案</div>
     <input type="file" id="rz-csv-file" accept=".csv" onchange="onFileSelect('rz',this)">
   </div>
+  <button class="btn btn-ghost btn-sm" onclick="downloadSample('rz')">⬇ 下載範例格式</button>
   <div class="col-map" id="rz-col-map" style="display:none;">
     <span class="col-label">AGBS PN 欄：</span>
     <select class="col-select" id="rz-col-agbspn"></select>
@@ -626,23 +628,26 @@ window.onFileSelect = (tab, input) => {
   chip.textContent = '📄 ' + file.name;
   chip.classList.add('has-file');
 
+  // 一律讀 ArrayBuffer，再判斷編碼
   const reader = new FileReader();
   reader.onload = e => {
-    let text = e.target.result;
-    // 嘗試偵測 Big5
-    if (text.includes('ï¿½') || /\ufffd/.test(text)) {
-      const rb = new FileReader();
-      rb.onload = e2 => {
-        const dec = new TextDecoder('big5');
-        text = dec.decode(e2.target.result);
-        parseAndShow(tab, text);
-      };
-      rb.readAsArrayBuffer(file);
+    const buf   = e.target.result;
+    const bytes = new Uint8Array(buf);
+
+    let text;
+    // UTF-8 BOM: EF BB BF
+    if (bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
+      text = new TextDecoder('utf-8').decode(buf);
     } else {
-      parseAndShow(tab, text);
+      // 嘗試 UTF-8，若有替換字元（U+FFFD）代表是 Big5
+      const utf8 = new TextDecoder('utf-8').decode(buf);
+      text = utf8.includes('\uFFFD')
+        ? new TextDecoder('big5').decode(buf)
+        : utf8;
     }
+    parseAndShow(tab, text);
   };
-  reader.readAsText(file, 'utf-8');
+  reader.readAsArrayBuffer(file);
 };
 
 function parseAndShow(tab, text) {
@@ -777,6 +782,41 @@ window.toast = toast;
 
 // 初始載入
 loadAll();
+
+// ── 下載範例 CSV ──────────────────────────────────────────────
+window.downloadSample = (tab) => {
+  const SS_SAMPLE = `SS PN,AGM PN,英文名稱,中文名稱,MSRP
+61527,ZL.A00TZ.0W6,Arctis Nova Pro,Steel Series賽睿Arctis Nova Pro有線電競耳機麥克風,8990
+61520,ZL.A00TZ.0W4,Arctis Nova Pro Wireless,Steel Series賽睿Arctis Nova Pro無線電競耳機麥克風,13590
+61553,ZL.A00TZ.0W8,Arctis Nova 7,Steel Series賽睿Arctis Nova 7無線電競耳機麥克風,6390
+61606,ZL.A00TZ.0WC,Arctis Nova 1,Steel Series賽睿Arctis Nova 1有線電競耳機麥克風,2290
+61670,ZL.A00TZ.0XP,Arctis Nova 5,Steel Series賽睿Arctis Nova 5無線電競耳機麥克風,4390
+62513,ZL.A00TZ.0WN,Rival 3,Steel Series賽睿Rival 3有線電競滑鼠,1390
+62618,ZL.A00TZ.0WX,Aerox 9 Wireless,Steel Series賽睿Aerox 9 無線電競滑鼠,4890
+64856,ZL.A00TZ.0XE,Apex Pro TKL 2023 US,Steel Series賽睿Apex Pro TKL有線電競鍵盤-英文(2023),7290
+63003,ZL.A00TZ.0WY,QcK+,Steel Series賽睿QcK電競鼠墊Large,790
+61595,ZL.W01TZ.03A,Alias Pro,Steel Series賽睿Alias Pro 遊戲麥克風,12990`;
+
+  const RZ_SAMPLE = `AGBS PN,RAZER型號,品名,系列別名稱,SRP
+ZL.A00TZ.105,RZ04-04530300-R3M1,Razer BlackShark V2 Pro無線雙模耳機X-黑,電競頭戴式耳機,6990
+ZL.A00TZ.10A,RZ12-03820300-R3A1,Razer Hammerhead HyperSpeed真無線耳機,真無線耳機,5190
+ZL.A00TZ.10B,RZ04-03970700-R3A1,Razer Kaira X有線電競耳機PS5,電競頭戴式耳機,2190
+ZL.A00TZ.13E,RZ01-04000100-R3M1,Razer Basilisk V3巴塞利斯蛇電競滑鼠,電競有線光學鼠,2099
+ZL.A00TZ.14R,RZ01-04630100-R3A1,Razer DeathAdder V3 Pro無線電競滑鼠-黑,電競無線滑鼠,4999
+ZL.A00TZ.144,RZ03-04681600-R3T1,Razer BlackWidow V4 Pro綠軸有線鍵盤,電競有線鍵盤,7590
+ZL.A00TZ.146,RZ03-04701600-R3T1,Razer BlackWidow V4X綠軸有線鍵盤,電競有線鍵盤,4299
+ZL.W01TZ.06T,RZ19-04040100-R3M1,Razer Seiren V2 Pro魔音海妖USB麥克風,麥克風,4799
+ZL.W01TZ.04V,RZ06-04010100-R3M1,Razer Wolverine V2 Chroma遊戲手把-黑,遊戲週邊,4499
+ZL.W01TZ.06I,RZ05-03920100-R3A1,Razer LEVIATHAN V2利維坦巨獸喇叭,其他喇叭,7990`;
+
+  const content  = tab === 'ss' ? SS_SAMPLE : RZ_SAMPLE;
+  const filename = tab === 'ss' ? 'sample_ss_pricebook.csv' : 'sample_rz_pricebook.csv';
+  const blob = new Blob(['\uFEFF' + content], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+};
 </script>
 </body>
 </html>
